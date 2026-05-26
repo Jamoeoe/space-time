@@ -28,17 +28,20 @@ fn main() {
         .build(&event_loop);
 
     let camera = Camera::new(
+        // starting position for the camera
         [0.0, 2.0, 2.0],
         [0.0, 0.0, 0.0], // point at origin
-        std::f32::consts::PI / 2.0,
+        // fov
+        std::f32::consts::PI / 4.0,
+        // doesnt render anything past 1024z
         1024.0,
+        // doesnt render anything closer than 0.1z
         0.1,
     );
 
     // create celestial bodies
     let sphere1 = CelestialBody::new(1.0, [0.0, 0.0, 0.0]);
     let sphere2 = CelestialBody::new(0.5, [2.0, 0.0, 2.0]);
-
 
     // create vertex buffer for the celestial bodies
     let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
