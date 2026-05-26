@@ -1,7 +1,10 @@
 use crate::{
     Camera,
-    application_controller::celestial_body::{
-        CelestialBody, {CB_FRAGMENT_SHADER, CB_VERTEX_SHADER},
+    application_controller::{
+        celestial_body::{
+            CelestialBody, {CB_FRAGMENT_SHADER, CB_VERTEX_SHADER},
+        },
+        physics_controller::PhysicsController,
     },
 };
 use glium::{
@@ -17,6 +20,7 @@ use glium::{
 
 pub mod camera;
 pub mod celestial_body;
+pub mod physics_controller;
 pub mod shapes;
 
 #[derive(Clone, Copy)]
@@ -29,7 +33,7 @@ pub struct SimApplicationController {
     window: Window,
     display: Display<glutin::surface::WindowSurface>,
     camera: Camera,
-    celestial_bodies: Vec<CelestialBody>,
+    physics_controller: PhysicsController,
     cb_vertex_buffer: VertexBuffer<Vertex>,
     cb_program: Program,
     cb_indices: NoIndices,
@@ -59,7 +63,7 @@ impl SimApplicationController {
             display: display,
             window: window,
             camera: camera,
-            celestial_bodies: celestial_bodies,
+            physics_controller: physics_controller::PhysicsController::new(celestial_bodies),
             cb_vertex_buffer: cb_vertex_buffer,
             cb_program: cb_program,
             cb_indices: cb_indices,
@@ -92,7 +96,7 @@ impl ApplicationHandler for SimApplicationController {
                 let perspective = self.camera.get_perspective(&target);
                 let view = self.camera.look_at();
 
-                for celestial_body in &self.celestial_bodies {
+                for celestial_body in &self.physics_controller.celestial_bodies {
                     // controls scale and position of each object
                     let model_matrix = [
                         [celestial_body.radius, 0.0, 0.0, 0.0],
