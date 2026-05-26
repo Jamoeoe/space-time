@@ -33,9 +33,9 @@ fn main() {
         [0.0, 0.0, 0.0], // point at origin
         // fov
         std::f32::consts::PI / 4.0,
-        // doesnt render anything past 1024z
+        // doesnt render anything past this point on the z axis
         1024.0,
-        // doesnt render anything closer than 0.1z
+        // doesnt render anything closer than this point on the z axis
         0.1,
     );
 
