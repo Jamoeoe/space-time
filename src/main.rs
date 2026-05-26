@@ -35,9 +35,12 @@ fn main() {
         0.1,
     );
 
+    // create celestial bodies
     let sphere1 = CelestialBody::new(1.0, [0.0, 0.0, 0.0]);
     let sphere2 = CelestialBody::new(0.5, [2.0, 0.0, 2.0]);
 
+
+    // create vertex buffer for the celestial bodies
     let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
 
     let mut app = SimApplicationController::new(
