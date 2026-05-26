@@ -27,7 +27,6 @@ pub const CB_FRAGMENT_SHADER: &'static str = r#"
 pub struct CelestialBody {
     pub radius: f32,
     //mass: f32,
-    //velocity: f32,
     //color: f32,
     pub cartesian_position: [f32; 3],
     polar_position: [f32; 3],
