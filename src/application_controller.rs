@@ -17,6 +17,10 @@ use glium::{
         window::Window,
     },
 };
+use std::{
+    thread,
+    time::{self, Duration, SystemTime},
+};
 
 pub mod camera;
 pub mod celestial_body;
@@ -29,14 +33,22 @@ pub struct Vertex {
 }
 implement_vertex!(Vertex, position);
 
+pub const TARGET_FPS: f32 = 60.0;
+const TARGET_FRAMETIME: Duration =
+    Duration::new(0, (1.0 / TARGET_FPS * 1000000000.0).round() as u32);
+
 pub struct SimApplicationController {
     window: Window,
     display: Display<glutin::surface::WindowSurface>,
     camera: Camera,
     physics_controller: PhysicsController,
+
     cb_vertex_buffer: VertexBuffer<Vertex>,
     cb_program: Program,
     cb_indices: NoIndices,
+
+    scene_scale: f32,
+    last_frame_time: SystemTime,
 
     // user controls
     mouse_dragging: bool,
@@ -50,6 +62,7 @@ impl SimApplicationController {
         camera: Camera,
         celestial_bodies: Vec<CelestialBody>,
         cb_vertex_buffer: glium::VertexBuffer<Vertex>,
+        scene_scale: f32,
     ) -> SimApplicationController {
         let cb_indices = glium::index::NoIndices(glium::index::PrimitiveType::LineLoop);
 
@@ -64,9 +77,14 @@ impl SimApplicationController {
             window: window,
             camera: camera,
             physics_controller: physics_controller::PhysicsController::new(celestial_bodies),
+
             cb_vertex_buffer: cb_vertex_buffer,
             cb_program: cb_program,
             cb_indices: cb_indices,
+
+            scene_scale: scene_scale,
+            last_frame_time: SystemTime::now(),
+
             mouse_dragging: false,
             last_mouse_position: [0.0; 2],
         };
@@ -88,7 +106,22 @@ impl ApplicationHandler for SimApplicationController {
             }
 
             WindowEvent::RedrawRequested => {
-                //self.time += 0.0002;
+                self.physics_controller.tick();
+                //println!("{}", self.physics_controller.celestial_bodies[0].cartesian_position[0]);
+
+                let time_since: Duration;
+                match time::SystemTime::now().duration_since(self.last_frame_time) {
+                    Ok(t) => time_since = t,
+                    Err(_) => {
+                        panic!("time moved backwards :(")
+                    }
+                }
+
+                if time_since < TARGET_FRAMETIME {
+                    thread::sleep(TARGET_FRAMETIME - time_since);
+                }
+
+                self.last_frame_time = SystemTime::now();
 
                 let mut target = self.display.draw();
                 target.clear_color(0.0, 0.0, 0.0, 1.0);
@@ -160,7 +193,7 @@ impl ApplicationHandler for SimApplicationController {
             }
 
             WindowEvent::MouseWheel { delta, .. } => {
-                let zoom_sensitivity = 0.1f32;
+                let zoom_sensitivity = 0.05f32 * self.scene_scale;
 
                 match delta {
                     MouseScrollDelta::LineDelta(_, d_rho) => {

@@ -2,8 +2,9 @@
 extern crate glium;
 use glium::winit::event_loop::EventLoop;
 
-use crate::application_controller::{
-    SimApplicationController, camera::Camera, celestial_body::*, shapes,
+use crate::{
+    application_controller::{SimApplicationController, camera::Camera, celestial_body::*, shapes},
+    physics_math::{distance_between_points_squared, get_circular_orbital_velocity_at_height}
 };
 
 pub mod application_controller;
@@ -28,27 +29,45 @@ fn main() {
         .build(&event_loop);
 
     // create celestial bodies
-    let moon = CelestialBody::new(
+    let mut moon = CelestialBody::new(
+        0,
         1.73 * 10f32.powi(6),
         7.346 * 10f32.powi(22),
+        [0.0, 0.0, 0.0],
         [3.84400000 * 10f32.powi(8), 0.0, 0.0],
     );
     let earth = CelestialBody::new(
+        1,
         6.38 * 10f32.powi(6),
         5.972 * 10f32.powi(24),
+        [0.0, 0.0, 0.0],
         [0.0, 0.0, 2.0],
     );
 
+    let velocity = get_circular_orbital_velocity_at_height(&earth, &moon);
+
+    moon.set_velocity(velocity);
+
     let bodies = vec![earth, moon];
+
+    let mut furthest_dst_from_origin = 0f32;
+    let origin = [0.0, 0.0, 0.0];
+
+    for body in bodies.iter() {
+        let dst = distance_between_points_squared(&body.cartesian_position, &origin);
+        if dst > furthest_dst_from_origin {
+            furthest_dst_from_origin = dst;
+        }
+    }
 
     let camera = Camera::new(
         // starting position for the camera
-        [0.0, 30000000.0, 30000000.0],
-        [0.0, 0.0, 0.0], // point at origin
+        [0.0, 30000000.0, furthest_dst_from_origin.sqrt()],
+        origin, // point at origin
         // fov
         std::f32::consts::PI / 4.0,
         // doesnt render anything past this point on the z axis
-        1024.0 * 10f32.powi(10),
+        furthest_dst_from_origin,
         // doesnt render anything closer than this point on the z axis
         0.1,
     );
@@ -56,7 +75,14 @@ fn main() {
     // create vertex buffer for the celestial bodies
     let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
 
-    let mut app = SimApplicationController::new(window, display, camera, bodies, cb_vertex_buffer);
+    let mut app = SimApplicationController::new(
+        window,
+        display,
+        camera,
+        bodies,
+        cb_vertex_buffer,
+        furthest_dst_from_origin.sqrt(),
+    );
 
     match event_loop.run_app(&mut app) {
         Ok(_) => {}

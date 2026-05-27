@@ -1,4 +1,11 @@
-use crate::CelestialBody;
+use crate::{
+    CelestialBody, application_controller,
+    linear_algebra_math::{add, scale, subtract, unit_vector_between_vectors},
+    physics_math::calculate_gravitational_pull,
+};
+
+pub const SIM_SPEED: f32 = 50000000.0; // how fast the sim should move compared to realtime
+const PER_TICK_SCALAR: f32 = SIM_SPEED / application_controller::TARGET_FPS;
 
 pub struct PhysicsController {
     pub celestial_bodies: Vec<CelestialBody>,
@@ -9,5 +16,35 @@ impl PhysicsController {
         return PhysicsController {
             celestial_bodies: celestial_bodies,
         };
+    }
+
+    pub fn tick(&mut self) {
+        // calculate and apply gravity
+        let mut gravity_impulses: Vec<[f32; 3]> = vec![];
+
+        for (i, cb1) in self.celestial_bodies.iter().enumerate() {
+            let mut cb_impulse: [f32; 3] = [0.0, 0.0, 0.0];
+
+            for (j, cb2) in self.celestial_bodies.iter().enumerate() {
+                if i != j {
+                    let force = calculate_gravitational_pull(cb1, cb2);
+
+                    let acceleration = force / cb1.mass * PER_TICK_SCALAR;
+                    let direction =
+                        unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
+
+                    cb_impulse = add(cb_impulse, scale(direction, -acceleration))
+                }
+            }
+
+            gravity_impulses.push(cb_impulse);
+        }
+
+        for (i, cb) in self.celestial_bodies.iter_mut().enumerate() {
+            let cb_impulse = gravity_impulses[i];
+            cb.velocity = add(cb.velocity, cb_impulse);
+
+            cb.apply_velocity();
+        }
     }
 }

@@ -25,8 +25,10 @@ pub const CB_FRAGMENT_SHADER: &'static str = r#"
     "#;
 
 pub struct CelestialBody {
+    pub id: usize,
     pub radius: f32,
     pub mass: f32,
+    pub velocity: [f32; 3],
     //color: f32,
     pub cartesian_position: [f32; 3],
     polar_position: [f32; 3],
@@ -34,8 +36,10 @@ pub struct CelestialBody {
 
 impl CelestialBody {
     pub fn new(
+        id: usize,
         radius: f32,
         mass: f32,
+        velocity: [f32; 3],
         //color: f32,
         cartesian_position: [f32; 3],
     ) -> CelestialBody {
@@ -45,17 +49,13 @@ impl CelestialBody {
             cartesian_position[2],
         );
         return CelestialBody {
+            id: id,
             radius: radius,
             mass: mass,
+            velocity: velocity,
             cartesian_position: cartesian_position,
             polar_position: [rho, theta, phi],
         };
-    }
-
-    pub fn update_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
-        self.polar_position = [rho, theta, phi];
-        let (x, y, z) = polar_to_cartesian(rho, theta, phi);
-        self.cartesian_position = [x, y, z];
     }
 
     pub fn modify_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
@@ -66,9 +66,31 @@ impl CelestialBody {
         );
     }
 
+    pub fn update_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
+        self.polar_position = [rho, theta, phi];
+        let (x, y, z) = polar_to_cartesian(rho, theta, phi);
+        self.cartesian_position = [x, y, z];
+    }
+
+    pub fn modify_position_cartesian(&mut self, x: f32, y: f32, z: f32) {
+        self.update_position_cartesian(
+            self.cartesian_position[0] + x,
+            self.cartesian_position[1] + y,
+            self.cartesian_position[2] + z,
+        );
+    }
+
     pub fn update_position_cartesian(&mut self, x: f32, y: f32, z: f32) {
         self.cartesian_position = [x, y, z];
         let (rho, theta, phi) = polar_to_cartesian(x, y, z);
         self.polar_position = [rho, theta, phi];
+    }
+
+    pub fn apply_velocity(&mut self) {
+        self.modify_position_cartesian(self.velocity[0], self.velocity[1], self.velocity[2]);
+    }
+
+    pub fn set_velocity(&mut self, v1: [f32; 3]) {
+        self.velocity = v1;
     }
 }

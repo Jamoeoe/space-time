@@ -88,3 +88,8 @@ pub fn equals<const N: usize, const M: usize>(m1: [[f32; M]; N], m2: [[f32; M]; 
     }
     return true;
 }
+
+pub fn unit_vector_between_vectors<const N: usize>(v1: [f32; N], v2: [f32; N]) -> [f32; N] {
+    let offset = subtract(v1, v2);
+    return normalize(offset);
+}
