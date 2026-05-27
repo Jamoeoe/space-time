@@ -1,10 +1,11 @@
-use crate::{application_controller::celestial_body::CelestialBody, linear_algebra_math::{cross3, scale, unit_vector_between_vectors}};
+use crate::{
+    application_controller::{celestial_body::CelestialBody, physics_controller},
+    linear_algebra_math::{cross3, scale, unit_vector_between_vectors},
+};
 
 pub const C: f32 = 299792458.0;
 pub const G: f32 = 0.000000000066743015;
 pub const K: f32 = 0.000000000000000000000000000000000000000000207665; // 8piG/c^4
-
-
 
 pub fn cartesian_to_polar(x: f32, y: f32, z: f32) -> (f32, f32, f32) {
     let rho = (x * x + y * y + z * z).sqrt();
@@ -21,13 +22,13 @@ pub fn polar_to_cartesian(rho: f32, theta: f32, phi: f32) -> (f32, f32, f32) {
 }
 
 pub fn calculate_gravitational_pull(cb1: &CelestialBody, cb2: &CelestialBody) -> f32 {
-    let dst = distance_between_cbs_squared(cb1, cb2);
+    let dst2 = distance_between_cbs_squared(cb1, cb2);
 
-    if dst < 1.0 {
+    if dst2 < 1.0 {
         return 0.0;
     }
 
-    let force = G * cb1.mass * cb2.mass / dst;
+    let force = G * cb1.mass * cb2.mass / dst2;
     return force;
 }
 
@@ -59,12 +60,16 @@ pub fn distance_between_points_squared(p1: &[f32; 3], p2: &[f32; 3]) -> f32 {
 }
 
 // gets the velocity needed to put cb2 into a circular orbit around cb1 at its height (assumes 2 body system)
-pub fn get_circular_orbital_velocity_at_height(cb1: &CelestialBody, cb2: &CelestialBody) -> [f32; 3] {
+pub fn get_circular_orbital_velocity_at_height(
+    cb1: &CelestialBody,
+    cb2: &CelestialBody,
+) -> [f32; 3] {
     let magnitude = (G * cb1.mass / distance_between_cbs(cb1, cb2)).sqrt();
 
-    let falling_direction = unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
+    let falling_direction =
+        unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
 
-    let velocity = scale(cross3(falling_direction, [1.0, 0.0, 0f32]), magnitude);
+    let velocity = scale(cross3(falling_direction, [0.0, 1.0, 0f32]), magnitude);
 
     return velocity;
 }

@@ -4,7 +4,7 @@ use glium::winit::event_loop::EventLoop;
 
 use crate::{
     application_controller::{SimApplicationController, camera::Camera, celestial_body::*, shapes},
-    physics_math::{distance_between_points_squared, get_circular_orbital_velocity_at_height}
+    physics_math::{distance_between_points_squared, get_circular_orbital_velocity_at_height},
 };
 
 pub mod application_controller;

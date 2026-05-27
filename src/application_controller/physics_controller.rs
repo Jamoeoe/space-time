@@ -1,11 +1,11 @@
 use crate::{
     CelestialBody, application_controller,
-    linear_algebra_math::{add, scale, subtract, unit_vector_between_vectors},
+    linear_algebra_math::{add, scale, unit_vector_between_vectors},
     physics_math::calculate_gravitational_pull,
 };
 
-pub const SIM_SPEED: f32 = 50000000.0; // how fast the sim should move compared to realtime
-const PER_TICK_SCALAR: f32 = SIM_SPEED / application_controller::TARGET_FPS;
+pub const SIM_SPEED: f32 = 10000000.0; // how fast the sim should move compared to realtime
+pub const PER_TICK_SCALAR: f32 = SIM_SPEED / application_controller::TARGET_FPS;
 
 pub struct PhysicsController {
     pub celestial_bodies: Vec<CelestialBody>,
@@ -33,7 +33,7 @@ impl PhysicsController {
                     let direction =
                         unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
 
-                    cb_impulse = add(cb_impulse, scale(direction, -acceleration))
+                    cb_impulse = add(cb_impulse, scale(direction, -acceleration));
                 }
             }
 
@@ -42,7 +42,12 @@ impl PhysicsController {
 
         for (i, cb) in self.celestial_bodies.iter_mut().enumerate() {
             let cb_impulse = gravity_impulses[i];
+
             cb.velocity = add(cb.velocity, cb_impulse);
+
+            if cb.id == 0 {
+                println!("{:?}", cb.velocity);
+            }
 
             cb.apply_velocity();
         }
