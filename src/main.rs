@@ -27,32 +27,36 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
+    // create celestial bodies
+    let moon = CelestialBody::new(
+        1.73 * 10f32.powi(6),
+        7.346 * 10f32.powi(22),
+        [3.84400000 * 10f32.powi(8), 0.0, 0.0],
+    );
+    let earth = CelestialBody::new(
+        6.38 * 10f32.powi(6),
+        5.972 * 10f32.powi(24),
+        [0.0, 0.0, 2.0],
+    );
+
+    let bodies = vec![earth, moon];
+
     let camera = Camera::new(
         // starting position for the camera
-        [0.0, 2.0, 2.0],
+        [0.0, 30000000.0, 30000000.0],
         [0.0, 0.0, 0.0], // point at origin
         // fov
         std::f32::consts::PI / 4.0,
         // doesnt render anything past this point on the z axis
-        1024.0,
+        1024.0 * 10f32.powi(10),
         // doesnt render anything closer than this point on the z axis
         0.1,
     );
 
-    // create celestial bodies
-    let sphere1 = CelestialBody::new(1.0, [0.0, 0.0, 0.0]);
-    let sphere2 = CelestialBody::new(0.5, [2.0, 0.0, 2.0]);
-
     // create vertex buffer for the celestial bodies
     let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
 
-    let mut app = SimApplicationController::new(
-        window,
-        display,
-        camera,
-        vec![sphere1, sphere2],
-        cb_vertex_buffer,
-    );
+    let mut app = SimApplicationController::new(window, display, camera, bodies, cb_vertex_buffer);
 
     match event_loop.run_app(&mut app) {
         Ok(_) => {}
