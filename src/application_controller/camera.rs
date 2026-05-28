@@ -33,43 +33,43 @@ impl Camera {
         }
     }
 
-    pub fn get_perspective(&self, target: &Frame) -> [[f64; 4]; 4] {
+    pub fn get_perspective(&self, target: &Frame) -> [[f32; 4]; 4] {
         let (width, height) = target.get_dimensions();
         let aspect_ratio = height as f64 / width as f64;
         let f = 1.0 / (self.fov / 2.0).tan();
 
         return [
-            [f * aspect_ratio, 0.0, 0.0, 0.0],
-            [0.0, f, 0.0, 0.0],
+            [f  as f32 * aspect_ratio  as f32, 0.0, 0.0, 0.0],
+            [0.0, f  as f32, 0.0, 0.0],
             [
                 0.0,
                 0.0,
-                (self.zfar + self.znear) / (self.zfar - self.znear),
+                ((self.zfar + self.znear) / (self.zfar - self.znear)) as f32,
                 1.0,
             ],
             [
                 0.0,
                 0.0,
-                -(2.0 * self.zfar * self.znear) / (self.zfar - self.znear),
+                (-(2.0 * self.zfar * self.znear) / (self.zfar - self.znear)) as f32,
                 0.0,
             ],
         ];
     }
 
-    pub fn look_at(&self) -> [[f64; 4]; 4] {
+    pub fn look_at(&self) -> [[f32; 4]; 4] {
         let camera_direction = normalize(subtract(self.target, self.cartesian_position));
         let up = [0.0, 0.0, 1.0f64];
         let right_axis = normalize(cross3(up, camera_direction));
         let up_axis = cross3(camera_direction, right_axis);
 
         return [
-            [right_axis[0], up_axis[0], camera_direction[0], 0.0],
-            [right_axis[1], up_axis[1], camera_direction[1], 0.0],
-            [right_axis[2], up_axis[2], camera_direction[2], 0.0],
+            [right_axis[0] as f32, up_axis[0] as f32, camera_direction[0] as f32, 0.0],
+            [right_axis[1] as f32, up_axis[1] as f32, camera_direction[1] as f32, 0.0],
+            [right_axis[2] as f32, up_axis[2] as f32, camera_direction[2] as f32, 0.0],
             [
-                -dot(right_axis, self.cartesian_position),
-                -dot(up_axis, self.cartesian_position),
-                -dot(camera_direction, self.cartesian_position),
+                -dot(right_axis, self.cartesian_position) as f32,
+                -dot(up_axis, self.cartesian_position) as f32,
+                -dot(camera_direction, self.cartesian_position) as f32,
                 1.0,
             ],
         ];

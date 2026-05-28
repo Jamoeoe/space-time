@@ -132,18 +132,18 @@ impl ApplicationHandler for SimApplicationController {
                 for celestial_body in &self.physics_controller.celestial_bodies {
                     // controls scale and position of each object
                     let model_matrix = [
-                        [celestial_body.radius, 0.0, 0.0, 0.0],
-                        [0.0, celestial_body.radius, 0.0, 0.0],
-                        [0.0, 0.0, celestial_body.radius, 0.0],
+                        [celestial_body.radius as f32, 0.0, 0.0, 0.0],
+                        [0.0, celestial_body.radius as f32, 0.0, 0.0],
+                        [0.0, 0.0, celestial_body.radius as f32, 0.0],
                         [
-                            celestial_body.cartesian_position[0],
-                            celestial_body.cartesian_position[1],
-                            celestial_body.cartesian_position[2],
-                            1.0f64,
+                            celestial_body.cartesian_position[0] as f32,
+                            celestial_body.cartesian_position[1] as f32,
+                            celestial_body.cartesian_position[2] as f32,
+                            1.0,
                         ],
                     ];
 
-                    let uniforms = uniform! { perspective: convert_f64_matrix_to_f32_4x4(perspective), view: convert_f64_matrix_to_f32_4x4(view), model_matrix: convert_f64_matrix_to_f32_4x4(model_matrix) };
+                    let uniforms = uniform! { perspective: perspective, view: view, model_matrix: model_matrix };
 
                     match target.draw(
                         &self.cb_vertex_buffer,
@@ -178,8 +178,8 @@ impl ApplicationHandler for SimApplicationController {
                 let y_sensitivity = 0.0006;
 
                 if self.mouse_dragging {
-                    let d_x = (self.last_mouse_position[0] - position.x) as f64;
-                    let d_y = (self.last_mouse_position[1] - position.y) as f64;
+                    let d_x= self.last_mouse_position[0] - position.x;
+                    let d_y = self.last_mouse_position[1] - position.y;
 
                     self.camera.modify_position_polar(
                         0.0,
