@@ -4,7 +4,6 @@ use crate::{
         celestial_body::{CB_FRAGMENT_SHADER, CB_VERTEX_SHADER, CelestialBody},
         physics_controller::PhysicsController,
     },
-    linear_algebra_math::convert_f64_matrix_to_f32_4x4,
 };
 use glium::{
     Display, Program, Surface, VertexBuffer,

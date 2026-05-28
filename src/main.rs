@@ -30,7 +30,7 @@ fn main() {
 
     let mut earth = CelestialBody::new(
         0,
-        6.38 * 10.0_f64.powi(6),
+        6.38 * 10.0_f64.powi(7),
         5.972 * 10.0_f64.powi(24),
         [0.0_f64, 0.0_f64, 0.0_f64],
         [0.0_f64, 0.0_f64, 2.0],
@@ -39,7 +39,7 @@ fn main() {
     // create celestial bodies
     let mut moon = CelestialBody::new(
         1,
-        1.73 * 10.0_f64.powi(6),
+        1.73 * 10.0_f64.powi(7),
         7.346 * 10.0_f64.powi(22),
         [0.0_f64, 0.0_f64, 0.0_f64],
         [3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
