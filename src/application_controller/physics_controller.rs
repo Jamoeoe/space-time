@@ -20,35 +20,45 @@ impl PhysicsController {
 
     pub fn tick(&mut self) {
         // calculate and apply gravity
+
+        // stores the list of velocities so that they can be edited after the nested for loop (because borrow checker)
         let mut gravity_impulses: Vec<[f32; 3]> = vec![];
 
+
+        // for each celestial body
         for (i, cb1) in self.celestial_bodies.iter().enumerate() {
             let mut cb_impulse: [f32; 3] = [0.0, 0.0, 0.0];
 
+            // for each celestial body that could affect the celestial body
             for (j, cb2) in self.celestial_bodies.iter().enumerate() {
                 if i != j {
+
+                    // calculate the total force in newtons
                     let force = calculate_gravitational_pull(cb1, cb2);
 
+                    // acceleration is energy / mass
                     let acceleration = force / cb1.mass;
+
+                    // apply the acceleration to the direction of the force to make an acceleration vector
                     let direction =
                         unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
 
+                    // add the acceleration vector to all other sources of acceleration acting upon the celestial body
                     cb_impulse = add(cb_impulse, scale(direction, -acceleration));
                 }
             }
 
+            // save the overall impulse
             gravity_impulses.push(cb_impulse);
         }
 
+        // apply the impulse to each celestial body
         for (i, cb) in self.celestial_bodies.iter_mut().enumerate() {
             let cb_impulse = gravity_impulses[i];
 
+            // the rate at which things accelerate should scale with the speed of the sim
             let time_scaled_impulse = scale(cb_impulse, PER_TICK_SCALAR);
             cb.velocity = add(cb.velocity, time_scaled_impulse);
-
-            if cb.id == 0 {
-                println!("{:?}", cb.velocity);
-            }
 
             cb.apply_velocity();
         }

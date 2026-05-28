@@ -1,5 +1,5 @@
 use crate::{
-    application_controller::{celestial_body::CelestialBody, physics_controller},
+    application_controller::{celestial_body::CelestialBody},
     linear_algebra_math::{cross3, scale, unit_vector_between_vectors},
 };
 

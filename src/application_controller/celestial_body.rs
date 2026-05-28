@@ -58,6 +58,7 @@ impl CelestialBody {
         };
     }
 
+    // apply a translation to the existing coords
     pub fn modify_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
         self.update_position_polar(
             (self.polar_position[0] + rho).abs(),
@@ -66,6 +67,7 @@ impl CelestialBody {
         );
     }
 
+    // create new coords
     pub fn update_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
         self.polar_position = [rho, theta, phi];
         let (x, y, z) = polar_to_cartesian(rho, theta, phi);
@@ -86,6 +88,7 @@ impl CelestialBody {
         self.polar_position = [rho, theta, phi];
     }
 
+    // applies the stored velocity to the position
     pub fn apply_velocity(&mut self) {
         // need to scale with the per tick scalar so that the sim moves at the correct speed
         let time_scaled_velocity = scale(self.velocity, physics_controller::PER_TICK_SCALAR);
