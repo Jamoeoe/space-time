@@ -107,7 +107,6 @@ impl ApplicationHandler for SimApplicationController {
 
             WindowEvent::RedrawRequested => {
                 self.physics_controller.tick();
-                //println!("{}", self.physics_controller.celestial_bodies[0].cartesian_position[0]);
 
                 let time_since: Duration;
                 match time::SystemTime::now().duration_since(self.last_frame_time) {

@@ -69,7 +69,7 @@ pub fn get_circular_orbital_velocity_at_height(
     let falling_direction =
         unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
 
-    let velocity = scale(cross3(falling_direction, [0.0, 1.0, 0f32]), magnitude);
+    let velocity = scale(cross3(falling_direction, [0.0, 0.0, 1f32]), magnitude);
 
     return velocity;
 }

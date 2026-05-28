@@ -1,4 +1,4 @@
-use crate::physics_math::*;
+use crate::{application_controller::physics_controller, linear_algebra_math::scale, physics_math::*};
 
 pub const CB_VERTEX_SHADER: &'static str = r#"
         #version 150
@@ -87,7 +87,9 @@ impl CelestialBody {
     }
 
     pub fn apply_velocity(&mut self) {
-        self.modify_position_cartesian(self.velocity[0], self.velocity[1], self.velocity[2]);
+        // need to scale with the per tick scalar so that the sim moves at the correct speed
+        let time_scaled_velocity = scale(self.velocity, physics_controller::PER_TICK_SCALAR);
+        self.modify_position_cartesian(time_scaled_velocity[0], time_scaled_velocity[1], time_scaled_velocity[2]);
     }
 
     pub fn set_velocity(&mut self, v1: [f32; 3]) {
