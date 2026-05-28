@@ -1,27 +1,27 @@
 use crate::{
-    application_controller::{celestial_body::CelestialBody},
+    application_controller::celestial_body::CelestialBody,
     linear_algebra_math::{cross3, scale, unit_vector_between_vectors},
 };
 
-pub const C: f32 = 299792458.0;
-pub const G: f32 = 0.000000000066743015;
-pub const K: f32 = 0.000000000000000000000000000000000000000000207665; // 8piG/c^4
+pub const C: f64 = 299792458.0;
+pub const G: f64 = 0.000000000066743015;
+pub const K: f64 = 0.000000000000000000000000000000000000000000207665; // 8piG/c^4
 
-pub fn cartesian_to_polar(x: f32, y: f32, z: f32) -> (f32, f32, f32) {
+pub fn cartesian_to_polar(x: f64, y: f64, z: f64) -> (f64, f64, f64) {
     let rho = (x * x + y * y + z * z).sqrt();
     let theta = (z / rho).acos();
     let phi = y.signum() * (x / (x * x + y * y).sqrt()).acos();
     return (rho, theta, phi);
 }
 
-pub fn polar_to_cartesian(rho: f32, theta: f32, phi: f32) -> (f32, f32, f32) {
+pub fn polar_to_cartesian(rho: f64, theta: f64, phi: f64) -> (f64, f64, f64) {
     let x = rho * theta.sin() * phi.cos();
     let y = rho * theta.sin() * phi.sin();
     let z = rho * theta.cos();
     return (x, y, z);
 }
 
-pub fn calculate_gravitational_pull(cb1: &CelestialBody, cb2: &CelestialBody) -> f32 {
+pub fn calculate_gravitational_pull(cb1: &CelestialBody, cb2: &CelestialBody) -> f64 {
     let dst2 = distance_between_cbs_squared(cb1, cb2);
 
     if dst2 < 1.0 {
@@ -32,11 +32,11 @@ pub fn calculate_gravitational_pull(cb1: &CelestialBody, cb2: &CelestialBody) ->
     return force;
 }
 
-pub fn distance_between_cbs(cb1: &CelestialBody, cb2: &CelestialBody) -> f32 {
+pub fn distance_between_cbs(cb1: &CelestialBody, cb2: &CelestialBody) -> f64 {
     return distance_between_points(&cb1.cartesian_position, &cb2.cartesian_position);
 }
 
-pub fn distance_between_points(p1: &[f32; 3], p2: &[f32; 3]) -> f32 {
+pub fn distance_between_points(p1: &[f64; 3], p2: &[f64; 3]) -> f64 {
     let x_dst = (p1[0] - p2[0]) * (p1[0] - p2[0]);
     let y_dst = (p1[1] - p2[1]) * (p1[1] - p2[1]);
     let z_dst = (p1[2] - p2[2]) * (p1[2] - p2[2]);
@@ -46,11 +46,11 @@ pub fn distance_between_points(p1: &[f32; 3], p2: &[f32; 3]) -> f32 {
 }
 
 // common case needs distance squared and sqrt is a very expensive operation to compute
-pub fn distance_between_cbs_squared(cb1: &CelestialBody, cb2: &CelestialBody) -> f32 {
+pub fn distance_between_cbs_squared(cb1: &CelestialBody, cb2: &CelestialBody) -> f64 {
     return distance_between_points_squared(&cb1.cartesian_position, &cb2.cartesian_position);
 }
 
-pub fn distance_between_points_squared(p1: &[f32; 3], p2: &[f32; 3]) -> f32 {
+pub fn distance_between_points_squared(p1: &[f64; 3], p2: &[f64; 3]) -> f64 {
     let x_dst = (p1[0] - p2[0]) * (p1[0] - p2[0]);
     let y_dst = (p1[1] - p2[1]) * (p1[1] - p2[1]);
     let z_dst = (p1[2] - p2[2]) * (p1[2] - p2[2]);
@@ -63,8 +63,7 @@ pub fn distance_between_points_squared(p1: &[f32; 3], p2: &[f32; 3]) -> f32 {
 pub fn get_circular_orbital_velocity_at_height(
     cb1: &CelestialBody,
     cb2: &CelestialBody,
-) -> ([f32; 3], [f32; 3]) {
-
+) -> ([f64; 3], [f64; 3]) {
     let total_mass = cb1.mass + cb2.mass;
 
     // the force in newtons needed to orbit at the given distance
@@ -78,7 +77,7 @@ pub fn get_circular_orbital_velocity_at_height(
     let target_direction =
         unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
 
-    let perenendicular_to_target_direction = cross3(target_direction, [0.0, 0.0, 1f32]);
+    let perenendicular_to_target_direction = cross3(target_direction, [0.0, 0.0, 1.0]);
 
     let cb1_velocity = scale(perenendicular_to_target_direction, cb1_acceleration);
     let cb2_velocity = scale(perenendicular_to_target_direction, cb2_acceleration);

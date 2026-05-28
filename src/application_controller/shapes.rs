@@ -15,9 +15,9 @@ pub fn make_sphere_lines(precision: i32) -> Vec<Vertex> {
     let mut shape = vec![];
 
     for theta in 0..precision + 1 {
-        let theta_step = std::f32::consts::PI / precision as f32 * theta as f32;
+        let theta_step = std::f64::consts::PI / precision as f64 * theta as f64;
         for phi in 0..precision + 1 {
-            let phi_step = 2.0 * std::f32::consts::PI / precision as f32 * phi as f32;
+            let phi_step = 2.0 * std::f64::consts::PI / precision as f64 * phi as f64;
 
             let (x, y, z) = polar_to_cartesian(1.0, theta_step, phi_step);
             shape.push(Vertex {
@@ -26,9 +26,9 @@ pub fn make_sphere_lines(precision: i32) -> Vec<Vertex> {
         }
     }
     for phi in 0..precision {
-        let phi_step = 2.0 * std::f32::consts::PI / precision as f32 * phi as f32;
+        let phi_step = 2.0 * std::f64::consts::PI / precision as f64 * phi as f64;
         for theta in 0..precision + 1 {
-            let theta_step = std::f32::consts::PI / precision as f32 * theta as f32;
+            let theta_step = std::f64::consts::PI / precision as f64 * theta as f64;
 
             let (x, y, z) = polar_to_cartesian(1.0, theta_step, phi_step);
             shape.push(Vertex {

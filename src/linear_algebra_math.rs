@@ -1,4 +1,4 @@
-pub fn length<const N: usize>(v: [f32; N]) -> f32 {
+pub fn length<const N: usize>(v: [f64; N]) -> f64 {
     let mut len = 0.0;
     for i in 0..N {
         len += v[i] * v[i];
@@ -7,32 +7,32 @@ pub fn length<const N: usize>(v: [f32; N]) -> f32 {
     return len;
 }
 
-pub fn scale<const N: usize>(v: [f32; N], scalar: f32) -> [f32; N] {
-    let mut scaled = [0.0f32; N];
+pub fn scale<const N: usize>(v: [f64; N], scalar: f64) -> [f64; N] {
+    let mut scaled = [0.0f64; N];
     for i in 0..N {
         scaled[i] = v[i] * scalar;
     }
     return scaled;
 }
 
-pub fn normalize<const N: usize>(v: [f32; N]) -> [f32; N] {
+pub fn normalize<const N: usize>(v: [f64; N]) -> [f64; N] {
     let length = length(v);
     return scale(v, 1.0 / length);
 }
 
-pub fn add<const N: usize>(v1: [f32; N], v2: [f32; N]) -> [f32; N] {
-    let mut sum = [0.0f32; N];
+pub fn add<const N: usize>(v1: [f64; N], v2: [f64; N]) -> [f64; N] {
+    let mut sum = [0.0f64; N];
     for i in 0..N {
         sum[i] = v1[i] + v2[i];
     }
     return sum;
 }
 
-pub fn subtract<const N: usize>(v1: [f32; N], v2: [f32; N]) -> [f32; N] {
+pub fn subtract<const N: usize>(v1: [f64; N], v2: [f64; N]) -> [f64; N] {
     return add(v1, scale(v2, -1.0));
 }
 
-pub fn dot<const N: usize>(v1: [f32; N], v2: [f32; N]) -> f32 {
+pub fn dot<const N: usize>(v1: [f64; N], v2: [f64; N]) -> f64 {
     let mut product = 0.0;
     for i in 0..N {
         product += v1[i] * v2[i];
@@ -42,7 +42,7 @@ pub fn dot<const N: usize>(v1: [f32; N], v2: [f32; N]) -> f32 {
 
 //    let theta = (dot(v1, v2) / (length(v1) * length(v2))).acos();
 
-pub fn cross3(v1: [f32; 3], v2: [f32; 3]) -> [f32; 3] {
+pub fn cross3(v1: [f64; 3], v2: [f64; 3]) -> [f64; 3] {
     return [
         v1[1] * v2[2] - v1[2] * v2[1],
         v1[2] * v2[0] - v1[0] * v2[2],
@@ -51,9 +51,9 @@ pub fn cross3(v1: [f32; 3], v2: [f32; 3]) -> [f32; 3] {
 }
 
 pub fn multiply_matrices<const N: usize, const M: usize, const P: usize>(
-    m1: [[f32; M]; N],
-    m2: [[f32; N]; P],
-) -> [[f32; M]; P] {
+    m1: [[f64; M]; N],
+    m2: [[f64; N]; P],
+) -> [[f64; M]; P] {
     let mut product = [[0.0; M]; P];
 
     for i in 0..P {
@@ -68,7 +68,7 @@ pub fn multiply_matrices<const N: usize, const M: usize, const P: usize>(
 }
 
 // flip columns and rows
-pub fn transpose_matrix<const N: usize, const M: usize>(m: [[f32; M]; N]) -> [[f32; N]; M] {
+pub fn transpose_matrix<const N: usize, const M: usize>(m: [[f64; M]; N]) -> [[f64; N]; M] {
     let mut transposed = [[0.0; N]; M];
     for i in 0..M {
         for j in 0..N {
@@ -78,7 +78,7 @@ pub fn transpose_matrix<const N: usize, const M: usize>(m: [[f32; M]; N]) -> [[f
     return transposed;
 }
 
-pub fn equals<const N: usize, const M: usize>(m1: [[f32; M]; N], m2: [[f32; M]; N]) -> bool {
+pub fn equals<const N: usize, const M: usize>(m1: [[f64; M]; N], m2: [[f64; M]; N]) -> bool {
     for i in 0..N {
         for j in 0..M {
             if (m1[i][j] - m2[i][j]).abs() > 0.00000001 {
@@ -89,7 +89,29 @@ pub fn equals<const N: usize, const M: usize>(m1: [[f32; M]; N], m2: [[f32; M]; 
     return true;
 }
 
-pub fn unit_vector_between_vectors<const N: usize>(v1: [f32; N], v2: [f32; N]) -> [f32; N] {
+pub fn unit_vector_between_vectors<const N: usize>(v1: [f64; N], v2: [f64; N]) -> [f64; N] {
     let offset = subtract(v1, v2);
     return normalize(offset);
+}
+
+pub fn convert_f64_matrix_to_f32<const N: usize, const M: usize>(
+    m1: [[f64; M]; N],
+) -> [[f32; M]; N] {
+    let mut converted = [[0f32; M]; N];
+    for i in 0..N {
+        for j in 0..M {
+            converted[i][j] = m1[i][j] as f32;
+        }
+    }
+    return converted;
+}
+
+pub fn convert_f64_matrix_to_f32_4x4(m1: [[f64; 4]; 4]) -> [[f32; 4]; 4] {
+    let mut converted = [[0f32; 4]; 4];
+    for i in 0..4 {
+        for j in 0..4 {
+            converted[i][j] = m1[i][j] as f32;
+        }
+    }
+    return converted;
 }

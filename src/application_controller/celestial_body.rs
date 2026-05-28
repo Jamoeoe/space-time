@@ -1,4 +1,6 @@
-use crate::{application_controller::physics_controller, linear_algebra_math::scale, physics_math::*};
+use crate::{
+    application_controller::physics_controller, linear_algebra_math::scale, physics_math::*,
+};
 
 pub const CB_VERTEX_SHADER: &'static str = r#"
         #version 150
@@ -26,22 +28,22 @@ pub const CB_FRAGMENT_SHADER: &'static str = r#"
 
 pub struct CelestialBody {
     pub id: usize,
-    pub radius: f32,
-    pub mass: f32,
-    pub velocity: [f32; 3],
-    //color: f32,
-    pub cartesian_position: [f32; 3],
-    polar_position: [f32; 3],
+    pub radius: f64,
+    pub mass: f64,
+    pub velocity: [f64; 3],
+    //color: f64,
+    pub cartesian_position: [f64; 3],
+    polar_position: [f64; 3],
 }
 
 impl CelestialBody {
     pub fn new(
         id: usize,
-        radius: f32,
-        mass: f32,
-        velocity: [f32; 3],
-        //color: f32,
-        cartesian_position: [f32; 3],
+        radius: f64,
+        mass: f64,
+        velocity: [f64; 3],
+        //color: f64,
+        cartesian_position: [f64; 3],
     ) -> CelestialBody {
         let (rho, theta, phi) = cartesian_to_polar(
             cartesian_position[0],
@@ -59,22 +61,22 @@ impl CelestialBody {
     }
 
     // apply a translation to the existing coords
-    pub fn modify_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
+    pub fn modify_position_polar(&mut self, rho: f64, theta: f64, phi: f64) {
         self.update_position_polar(
             (self.polar_position[0] + rho).abs(),
-            (self.polar_position[1] + theta) % (2.0 * std::f32::consts::PI),
-            (self.polar_position[2] + phi) % (2.0 * std::f32::consts::PI),
+            (self.polar_position[1] + theta) % (2.0 * std::f64::consts::PI),
+            (self.polar_position[2] + phi) % (2.0 * std::f64::consts::PI),
         );
     }
 
     // create new coords
-    pub fn update_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
+    pub fn update_position_polar(&mut self, rho: f64, theta: f64, phi: f64) {
         self.polar_position = [rho, theta, phi];
         let (x, y, z) = polar_to_cartesian(rho, theta, phi);
         self.cartesian_position = [x, y, z];
     }
 
-    pub fn modify_position_cartesian(&mut self, x: f32, y: f32, z: f32) {
+    pub fn modify_position_cartesian(&mut self, x: f64, y: f64, z: f64) {
         self.update_position_cartesian(
             self.cartesian_position[0] + x,
             self.cartesian_position[1] + y,
@@ -82,7 +84,7 @@ impl CelestialBody {
         );
     }
 
-    pub fn update_position_cartesian(&mut self, x: f32, y: f32, z: f32) {
+    pub fn update_position_cartesian(&mut self, x: f64, y: f64, z: f64) {
         self.cartesian_position = [x, y, z];
         let (rho, theta, phi) = polar_to_cartesian(x, y, z);
         self.polar_position = [rho, theta, phi];
@@ -92,10 +94,14 @@ impl CelestialBody {
     pub fn apply_velocity(&mut self) {
         // need to scale with the per tick scalar so that the sim moves at the correct speed
         let time_scaled_velocity = scale(self.velocity, physics_controller::PER_TICK_SCALAR);
-        self.modify_position_cartesian(time_scaled_velocity[0], time_scaled_velocity[1], time_scaled_velocity[2]);
+        self.modify_position_cartesian(
+            time_scaled_velocity[0],
+            time_scaled_velocity[1],
+            time_scaled_velocity[2],
+        );
     }
 
-    pub fn set_velocity(&mut self, v1: [f32; 3]) {
+    pub fn set_velocity(&mut self, v1: [f64; 3]) {
         self.velocity = v1;
     }
 }

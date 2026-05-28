@@ -2,21 +2,21 @@ use crate::{linear_algebra_math::*, physics_math::*};
 use glium::{Frame, Surface};
 
 pub struct Camera {
-    cartesian_position: [f32; 3],
-    polar_position: [f32; 3],
-    target: [f32; 3],
-    fov: f32,
-    zfar: f32,
-    znear: f32,
+    cartesian_position: [f64; 3],
+    polar_position: [f64; 3],
+    target: [f64; 3],
+    fov: f64,
+    zfar: f64,
+    znear: f64,
 }
 
 impl Camera {
     pub fn new(
-        cartesian_position: [f32; 3],
-        target: [f32; 3], // point at origin
-        fov: f32,
-        zfar: f32,
-        znear: f32,
+        cartesian_position: [f64; 3],
+        target: [f64; 3], // point at origin
+        fov: f64,
+        zfar: f64,
+        znear: f64,
     ) -> Camera {
         let (rho, theta, phi) = cartesian_to_polar(
             cartesian_position[0],
@@ -33,9 +33,9 @@ impl Camera {
         }
     }
 
-    pub fn get_perspective(&self, target: &Frame) -> [[f32; 4]; 4] {
+    pub fn get_perspective(&self, target: &Frame) -> [[f64; 4]; 4] {
         let (width, height) = target.get_dimensions();
-        let aspect_ratio = height as f32 / width as f32;
+        let aspect_ratio = height as f64 / width as f64;
         let f = 1.0 / (self.fov / 2.0).tan();
 
         return [
@@ -56,9 +56,9 @@ impl Camera {
         ];
     }
 
-    pub fn look_at(&mut self) -> [[f32; 4]; 4] {
+    pub fn look_at(&self) -> [[f64; 4]; 4] {
         let camera_direction = normalize(subtract(self.target, self.cartesian_position));
-        let up = [0.0, 0.0, 1.0f32];
+        let up = [0.0, 0.0, 1.0f64];
         let right_axis = normalize(cross3(up, camera_direction));
         let up_axis = cross3(camera_direction, right_axis);
 
@@ -75,21 +75,25 @@ impl Camera {
         ];
     }
 
-    pub fn update_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
+    pub fn set_target(&mut self, coords: [f64; 3]) {
+        self.target = coords;
+    }
+
+    pub fn update_position_polar(&mut self, rho: f64, theta: f64, phi: f64) {
         self.polar_position = [rho, theta, phi];
         let (x, y, z) = polar_to_cartesian(rho, theta, phi);
         self.cartesian_position = [x, y, z];
     }
 
-    pub fn modify_position_polar(&mut self, rho: f32, theta: f32, phi: f32) {
+    pub fn modify_position_polar(&mut self, rho: f64, theta: f64, phi: f64) {
         self.update_position_polar(
-            (self.polar_position[0] + rho).abs(),
-            (self.polar_position[1] + theta) % (2.0 * std::f32::consts::PI),
-            (self.polar_position[2] + phi) % (2.0 * std::f32::consts::PI),
+            self.polar_position[0] + rho,
+            (self.polar_position[1] + theta) % (2.0 * std::f64::consts::PI),
+            (self.polar_position[2] + phi) % (2.0 * std::f64::consts::PI),
         );
     }
 
-    pub fn update_position_cartesian(&mut self, x: f32, y: f32, z: f32) {
+    pub fn update_position_cartesian(&mut self, x: f64, y: f64, z: f64) {
         self.cartesian_position = [x, y, z];
         let (rho, theta, phi) = polar_to_cartesian(x, y, z);
         self.polar_position = [rho, theta, phi];

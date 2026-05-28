@@ -28,25 +28,22 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
-
     let mut earth = CelestialBody::new(
         0,
-        6.38 * 10f32.powi(6),
-        5.972 * 10f32.powi(24),
-        [0.0, 0.0, 0.0],
-        [0.0, 0.0, 2.0],
+        6.38 * 10.0_f64.powi(6),
+        5.972 * 10.0_f64.powi(24),
+        [0.0_f64, 0.0_f64, 0.0_f64],
+        [0.0_f64, 0.0_f64, 2.0],
     );
 
     // create celestial bodies
     let mut moon = CelestialBody::new(
         1,
-        1.73 * 10f32.powi(6),
-       // 5.972 * 10f32.powi(24),
-        7.346 * 10f32.powi(22),
-        [0.0, 0.0, 0.0],
-        [3.84400000 * 10f32.powi(8), 0.0, 0.0],
+        1.73 * 10.0_f64.powi(6),
+        7.346 * 10.0_f64.powi(22),
+        [0.0_f64, 0.0_f64, 0.0_f64],
+        [3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
     );
-
 
     let (earth_v, moon_v) = get_circular_orbital_velocity_at_height(&earth, &moon);
 
@@ -55,8 +52,8 @@ fn main() {
 
     let bodies = vec![earth, moon];
 
-    let mut furthest_dst_from_origin = 0f32;
-    let origin = [0.0, 0.0, 0.0];
+    let mut furthest_dst_from_origin = 0.0_f64;
+    let origin = [0.0_f64, 0.0_f64, 0.0_f64];
 
     for body in bodies.iter() {
         let dst = distance_between_points_squared(&body.cartesian_position, &origin);
@@ -67,10 +64,10 @@ fn main() {
 
     let camera = Camera::new(
         // starting position for the camera
-        [0.0, 30000000.0, furthest_dst_from_origin.sqrt()],
+        [0.0_f64, 30000000.0_f64, furthest_dst_from_origin.sqrt()],
         origin, // point at origin
         // fov
-        std::f32::consts::PI / 4.0,
+        std::f64::consts::PI / 4.0,
         // doesnt render anything past this point on the z axis
         furthest_dst_from_origin,
         // doesnt render anything closer than this point on the z axis

@@ -4,8 +4,8 @@ use crate::{
     physics_math::calculate_gravitational_pull,
 };
 
-pub const SIM_SPEED: f32 = 0.0; // how fast the sim should move compared to realtime
-pub const PER_TICK_SCALAR: f32 = SIM_SPEED / application_controller::TARGET_FPS;
+pub const SIM_SPEED: f64 = 90000.0; // how fast the sim should move compared to realtime
+pub const PER_TICK_SCALAR: f64 = SIM_SPEED / application_controller::TARGET_FPS;
 
 pub struct PhysicsController {
     pub celestial_bodies: Vec<CelestialBody>,
@@ -22,17 +22,15 @@ impl PhysicsController {
         // calculate and apply gravity
 
         // stores the list of velocities so that they can be edited after the nested for loop (because borrow checker)
-        let mut gravity_impulses: Vec<[f32; 3]> = vec![];
-
+        let mut gravity_impulses: Vec<[f64; 3]> = vec![];
 
         // for each celestial body
         for (i, cb1) in self.celestial_bodies.iter().enumerate() {
-            let mut cb_impulse: [f32; 3] = [0.0, 0.0, 0.0];
+            let mut cb_impulse: [f64; 3] = [0.0, 0.0, 0.0];
 
             // for each celestial body that could affect the celestial body
             for (j, cb2) in self.celestial_bodies.iter().enumerate() {
                 if i != j {
-
                     // calculate the total force in newtons
                     let force = calculate_gravitational_pull(cb1, cb2);
 
