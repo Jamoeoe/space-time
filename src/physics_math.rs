@@ -63,13 +63,25 @@ pub fn distance_between_points_squared(p1: &[f32; 3], p2: &[f32; 3]) -> f32 {
 pub fn get_circular_orbital_velocity_at_height(
     cb1: &CelestialBody,
     cb2: &CelestialBody,
-) -> [f32; 3] {
-    let magnitude = (G * cb1.mass / distance_between_cbs(cb1, cb2)).sqrt();
+) -> ([f32; 3], [f32; 3]) {
 
-    let falling_direction =
+    let total_mass = cb1.mass + cb2.mass;
+
+    // the force in newtons needed to orbit at the given distance
+    let force_applied = (G * total_mass / distance_between_cbs(cb1, cb2)).sqrt();
+
+    // the required velocity to orbit for each object
+    let cb1_acceleration = force_applied * cb2.mass / total_mass;
+    let cb2_acceleration = -force_applied * cb1.mass / total_mass;
+
+    // direction perpendicular to the other mass
+    let target_direction =
         unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
 
-    let velocity = scale(cross3(falling_direction, [0.0, 0.0, 1f32]), magnitude);
+    let perenendicular_to_target_direction = cross3(target_direction, [0.0, 0.0, 1f32]);
 
-    return velocity;
+    let cb1_velocity = scale(perenendicular_to_target_direction, cb1_acceleration);
+    let cb2_velocity = scale(perenendicular_to_target_direction, cb2_acceleration);
+
+    return (cb1_velocity, cb2_velocity);
 }

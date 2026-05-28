@@ -28,25 +28,30 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
-    // create celestial bodies
-    let mut moon = CelestialBody::new(
+
+    let mut earth = CelestialBody::new(
         0,
-        1.73 * 10f32.powi(6),
-        7.346 * 10f32.powi(22),
-        [0.0, 0.0, 0.0],
-        [3.84400000 * 10f32.powi(8), 0.0, 0.0],
-    );
-    let earth = CelestialBody::new(
-        1,
         6.38 * 10f32.powi(6),
         5.972 * 10f32.powi(24),
         [0.0, 0.0, 0.0],
         [0.0, 0.0, 2.0],
     );
 
-    let velocity = get_circular_orbital_velocity_at_height(&earth, &moon);
+    // create celestial bodies
+    let mut moon = CelestialBody::new(
+        1,
+        1.73 * 10f32.powi(6),
+       // 5.972 * 10f32.powi(24),
+        7.346 * 10f32.powi(22),
+        [0.0, 0.0, 0.0],
+        [3.84400000 * 10f32.powi(8), 0.0, 0.0],
+    );
 
-    moon.set_velocity(velocity);
+
+    let (earth_v, moon_v) = get_circular_orbital_velocity_at_height(&earth, &moon);
+
+    earth.set_velocity(earth_v);
+    moon.set_velocity(moon_v);
 
     let bodies = vec![earth, moon];
 

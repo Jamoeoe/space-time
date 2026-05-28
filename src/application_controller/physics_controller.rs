@@ -4,7 +4,7 @@ use crate::{
     physics_math::calculate_gravitational_pull,
 };
 
-pub const SIM_SPEED: f32 = 90000.0; // how fast the sim should move compared to realtime
+pub const SIM_SPEED: f32 = 0.0; // how fast the sim should move compared to realtime
 pub const PER_TICK_SCALAR: f32 = SIM_SPEED / application_controller::TARGET_FPS;
 
 pub struct PhysicsController {
