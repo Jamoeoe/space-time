@@ -13,7 +13,7 @@ pub struct Camera {
 impl Camera {
     pub fn new(
         cartesian_position: [f64; 3],
-        target: [f64; 3], // point at origin
+        target: [f64; 3],
         fov: f64,
         zfar: f64,
         znear: f64,
@@ -26,7 +26,7 @@ impl Camera {
         Camera {
             cartesian_position: cartesian_position,
             polar_position: [rho, theta, phi],
-            target: target, // point at origin
+            target: target,
             fov: fov,
             zfar: zfar,
             znear: znear,
