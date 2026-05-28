@@ -19,9 +19,7 @@ impl PhysicsController {
     }
 
     pub fn tick(&mut self) {
-        // calculate and apply gravity
-
-        // stores the list of velocities so that they can be edited after the nested for loop (because borrow checker)
+        // create the list of impulses so that they can be edited after the nested for loop (because borrow checker)
         let mut gravity_impulses: Vec<[f64; 3]> = vec![];
 
         // for each celestial body
