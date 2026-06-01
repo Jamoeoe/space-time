@@ -1,7 +1,6 @@
 use crate::{
-    CelestialBody, application_controller,
-    linear_algebra_math::{add, scale, unit_vector_between_vectors},
-    physics_math::calculate_gravitational_pull,
+    CelestialBody,
+    physics_math::distance_between_cbs_squared,
 };
 
 struct Node {
