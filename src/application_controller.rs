@@ -24,6 +24,7 @@ pub mod camera;
 pub mod celestial_body;
 pub mod physics_controller;
 pub mod shapes;
+pub mod collisions;
 
 #[derive(Clone, Copy)]
 pub struct Vertex {
