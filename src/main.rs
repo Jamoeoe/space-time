@@ -36,7 +36,6 @@ fn main() {
         [0.0_f64, 0.0_f64, 2.0],
     );
 
-    // create celestial bodies
     let mut moon = CelestialBody::new(
         1,
         1.73 * 10.0_f64.powi(7),
@@ -45,12 +44,20 @@ fn main() {
         [3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
     );
 
+    let mars = CelestialBody::new(
+        2,
+        3.4 * 10.0_f64.powi(7),
+        6.417 * 10.0_f64.powi(23),
+        [0.0_f64, 400.0_f64, 200.0_f64],
+        [-3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
+    );
+
     let (earth_v, moon_v) = get_circular_orbital_velocity_at_height(&earth, &moon);
 
     earth.set_velocity(earth_v);
     moon.set_velocity(moon_v);
 
-    let bodies = vec![earth, moon];
+    let bodies = vec![earth, moon, mars];
 
     let mut furthest_dst_from_origin = 0.0_f64;
     let origin = [0.0_f64, 0.0_f64, 0.0_f64];
