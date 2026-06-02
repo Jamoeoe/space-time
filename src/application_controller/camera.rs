@@ -39,8 +39,8 @@ impl Camera {
         let f = 1.0 / (self.fov / 2.0).tan();
 
         return [
-            [f  as f32 * aspect_ratio  as f32, 0.0, 0.0, 0.0],
-            [0.0, f  as f32, 0.0, 0.0],
+            [f as f32 * aspect_ratio as f32, 0.0, 0.0, 0.0],
+            [0.0, f as f32, 0.0, 0.0],
             [
                 0.0,
                 0.0,
@@ -63,9 +63,24 @@ impl Camera {
         let up_axis = cross3(camera_direction, right_axis);
 
         return [
-            [right_axis[0] as f32, up_axis[0] as f32, camera_direction[0] as f32, 0.0],
-            [right_axis[1] as f32, up_axis[1] as f32, camera_direction[1] as f32, 0.0],
-            [right_axis[2] as f32, up_axis[2] as f32, camera_direction[2] as f32, 0.0],
+            [
+                right_axis[0] as f32,
+                up_axis[0] as f32,
+                camera_direction[0] as f32,
+                0.0,
+            ],
+            [
+                right_axis[1] as f32,
+                up_axis[1] as f32,
+                camera_direction[1] as f32,
+                0.0,
+            ],
+            [
+                right_axis[2] as f32,
+                up_axis[2] as f32,
+                camera_direction[2] as f32,
+                0.0,
+            ],
             [
                 -dot(right_axis, self.cartesian_position) as f32,
                 -dot(up_axis, self.cartesian_position) as f32,

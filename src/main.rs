@@ -1,6 +1,7 @@
 #[macro_use]
 extern crate glium;
 use glium::winit::event_loop::EventLoop;
+use rand::prelude::*;
 
 use crate::{
     application_controller::{SimApplicationController, camera::Camera, celestial_body::*, shapes},
@@ -28,7 +29,7 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
-    let mut earth = CelestialBody::new(
+    /*    let mut earth = CelestialBody::new(
         0,
         6.38 * 10.0_f64.powi(7),
         5.972 * 10.0_f64.powi(24),
@@ -57,7 +58,30 @@ fn main() {
     earth.set_velocity(earth_v);
     moon.set_velocity(moon_v);
 
-    let bodies = vec![earth, moon, mars];
+    let bodies = vec![earth, moon, mars]; */
+
+    let mut rng = rand::rng();
+
+    let mut bodies: Vec<CelestialBody> = vec![];
+    for i in 0..100 {
+        let body = CelestialBody::new(
+            i,
+            (5.0 + rng.random::<f64>()) * 10.0_f64.powi(7),
+            (5.0 + rng.random::<f64>()) * 10.0_f64.powi(23),
+            
+            [
+                1000.0 * (rng.random::<f64>() - 0.5),
+                1000.0 * (rng.random::<f64>() - 0.5),
+                1000.0 * (rng.random::<f64>() - 0.5),
+            ],
+            [
+                10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
+                10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
+                10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
+            ],
+        );
+        bodies.push(body);
+    }
 
     let mut furthest_dst_from_origin = 0.0_f64;
     let origin = [0.0_f64, 0.0_f64, 0.0_f64];

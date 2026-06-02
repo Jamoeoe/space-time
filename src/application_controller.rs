@@ -22,9 +22,9 @@ use std::{
 
 pub mod camera;
 pub mod celestial_body;
+pub mod octree;
 pub mod physics_controller;
 pub mod shapes;
-pub mod collisions;
 
 #[derive(Clone, Copy)]
 pub struct Vertex {
@@ -178,7 +178,7 @@ impl ApplicationHandler for SimApplicationController {
                 let y_sensitivity = 0.0006;
 
                 if self.mouse_dragging {
-                    let d_x= self.last_mouse_position[0] - position.x;
+                    let d_x = self.last_mouse_position[0] - position.x;
                     let d_y = self.last_mouse_position[1] - position.y;
 
                     self.camera.modify_position_polar(
