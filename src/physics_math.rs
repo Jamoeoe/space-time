@@ -1,6 +1,6 @@
 use crate::{
     application_controller::celestial_body::CelestialBody,
-    linear_algebra_math::{cross3, scale, unit_vector_between_vectors},
+    linear_algebra_math::{cross3, dot, length, scale, subtract, unit_vector_between_vectors},
 };
 
 pub const C: f64 = 299792458.0;
@@ -21,14 +21,8 @@ pub fn polar_to_cartesian(rho: f64, theta: f64, phi: f64) -> (f64, f64, f64) {
     return (x, y, z);
 }
 
-pub fn calculate_gravitational_pull(cb1: &CelestialBody, cb2: &CelestialBody) -> f64 {
-    let dst2 = distance_between_cbs_squared(cb1, cb2);
-
-    if dst2 < 1.0 {
-        return 0.0;
-    }
-
-    let force = G * cb1.mass * cb2.mass / dst2;
+pub fn calculate_gravitational_pull(cb1_mass: f64, cb2_mass: f64, distance_squared: f64) -> f64 {
+    let force = G * cb1_mass * cb2_mass / distance_squared;
     return force;
 }
 
@@ -83,4 +77,20 @@ pub fn get_circular_orbital_velocity_at_height(
     let cb2_velocity = scale(perenendicular_to_target_direction, cb2_acceleration);
 
     return (cb1_velocity, cb2_velocity);
+}
+
+// if they are colliding, returns the angles to set the new velocities to
+pub fn check_collision(cb1: &CelestialBody, cb2: &CelestialBody, distance_squared: f64) -> (bool, f64, f64) {
+    if distance_squared > (cb1.radius + cb2.radius) * (cb1.radius + cb2.radius) {
+        return (false, 0.0, 0.0)
+    }
+    
+    let cb1_to_cb2_vec = subtract(cb1.cartesian_position, cb2.cartesian_position);
+
+    let cb1_velocity_to_cb2_angle = (dot(cb1.velocity, cb1_to_cb2_vec) / (length(cb1.velocity) * length(cb1_to_cb2_vec))).acos();
+    let cb2_velocity_to_cb2_angle = (dot(cb2.velocity, cb1_to_cb2_vec) / (length(cb2.velocity) * length(cb1_to_cb2_vec))).acos();
+
+    let sum_angles = cb1_velocity_to_cb2_angle + cb2_velocity_to_cb2_angle;
+
+    return (true, sum_angles/cb2.mass, sum_angles/cb1.mass);
 }

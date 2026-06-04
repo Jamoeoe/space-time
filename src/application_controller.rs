@@ -22,7 +22,6 @@ use std::{
 
 pub mod camera;
 pub mod celestial_body;
-pub mod octree;
 pub mod physics_controller;
 pub mod shapes;
 

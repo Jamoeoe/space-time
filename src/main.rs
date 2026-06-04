@@ -68,7 +68,6 @@ fn main() {
             i,
             (5.0 + rng.random::<f64>()) * 10.0_f64.powi(7),
             (5.0 + rng.random::<f64>()) * 10.0_f64.powi(23),
-            
             [
                 1000.0 * (rng.random::<f64>() - 0.5),
                 1000.0 * (rng.random::<f64>() - 0.5),

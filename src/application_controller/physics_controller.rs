@@ -1,7 +1,7 @@
 use crate::{
     CelestialBody, application_controller,
     linear_algebra_math::{add, scale, unit_vector_between_vectors},
-    physics_math::calculate_gravitational_pull,
+    physics_math::{calculate_gravitational_pull, check_collision, distance_between_cbs_squared},
 };
 
 pub const SIM_SPEED: f64 = 2000000.0; // how fast the sim should move compared to realtime
@@ -22,26 +22,30 @@ impl PhysicsController {
         // create the list of impulses so that they can be edited after the nested for loop (because borrow checker)
         let mut gravity_impulses: Vec<[f64; 3]> = vec![];
 
-        // for each celestial body
-        for (i, cb1) in self.celestial_bodies.iter().enumerate() {
+        for cb1 in self.celestial_bodies.iter() {
             let mut cb_impulse: [f64; 3] = [0.0, 0.0, 0.0];
 
-            // for each celestial body that could affect the celestial body
-            for (j, cb2) in self.celestial_bodies.iter().enumerate() {
-                if i != j {
-                    // calculate the total force in newtons
-                    let force = calculate_gravitational_pull(cb1, cb2);
+            for cb2 in self.celestial_bodies.iter() {
+                    let distance_squared = distance_between_cbs_squared(cb1, cb2);
+                    if distance_squared < 1.0 {
+                            continue;
+                    }
 
-                    // acceleration is energy / mass
+                    let (collided, cb1_angle, cb2_angle) = check_collision(cb1, cb2, distance_squared);
+
+                    if collided {
+                        let collision_energy = length(cb1.velocity) * cb1.mass + length(cb2.velocity) * cb2.mass;
+                        // calculate unit vector at degree
+                    }
+
+                    let force = calculate_gravitational_pull(cb1.mass, cb2.mass, distance_squared);
+
                     let acceleration = force / cb1.mass;
 
-                    // apply the acceleration to the direction of the force to make an acceleration vector
                     let direction =
                         unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
 
-                    // add the acceleration vector to all other sources of acceleration acting upon the celestial body
                     cb_impulse = add(cb_impulse, scale(direction, -acceleration));
-                }
             }
 
             // save the overall impulse
