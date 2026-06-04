@@ -63,7 +63,7 @@ fn main() {
     let mut rng = rand::rng();
 
     let mut bodies: Vec<CelestialBody> = vec![];
-    for i in 0..100 {
+    for i in 0..200 {
         let body = CelestialBody::new(
             i,
             (5.0 + rng.random::<f64>()) * 10.0_f64.powi(7),
