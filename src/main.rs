@@ -29,7 +29,7 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
-    /*    let mut earth = CelestialBody::new(
+        let mut earth = CelestialBody::new(
         0,
         6.38 * 10.0_f64.powi(7),
         5.972 * 10.0_f64.powi(24),
@@ -44,6 +44,10 @@ fn main() {
         [0.0_f64, 0.0_f64, 0.0_f64],
         [3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
     );
+
+    let bodies = vec![earth, moon];
+
+    /* 
 
     let mars = CelestialBody::new(
         2,
@@ -60,7 +64,8 @@ fn main() {
 
     let bodies = vec![earth, moon, mars]; */
 
-    let mut rng = rand::rng();
+    /*
+        let mut rng = rand::rng();
 
     let mut bodies: Vec<CelestialBody> = vec![];
     for i in 0..200 {
@@ -81,6 +86,8 @@ fn main() {
         );
         bodies.push(body);
     }
+     */
+
 
     let mut furthest_dst_from_origin = 0.0_f64;
     let origin = [0.0_f64, 0.0_f64, 0.0_f64];

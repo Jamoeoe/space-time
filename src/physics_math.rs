@@ -1,6 +1,6 @@
 use crate::{
     application_controller::celestial_body::CelestialBody,
-    linear_algebra_math::{cross3, dot, length, scale, subtract, unit_vector_between_vectors},
+    linear_algebra_math::{add, cross3, dot, length, normalize, rotate_vector, scale, subtract, unit_vector_between_vectors},
 };
 
 pub const C: f64 = 299792458.0;
@@ -79,18 +79,16 @@ pub fn get_circular_orbital_velocity_at_height(
     return (cb1_velocity, cb2_velocity);
 }
 
-// if they are colliding, returns the angles to set the new velocities to
-pub fn check_collision(cb1: &CelestialBody, cb2: &CelestialBody, distance_squared: f64) -> (bool, f64, f64) {
+// if they are colliding, returns the velocity impulse of the first body in the collision
+pub fn check_collision(cb1: &CelestialBody, cb2: &CelestialBody, distance_squared: f64) -> (bool, [f64; 3]) {
     if distance_squared > (cb1.radius + cb2.radius) * (cb1.radius + cb2.radius) {
-        return (false, 0.0, 0.0)
+        return (false, [0.0; 3]);
     }
-    
-    let cb1_to_cb2_vec = subtract(cb1.cartesian_position, cb2.cartesian_position);
 
-    let cb1_velocity_to_cb2_angle = (dot(cb1.velocity, cb1_to_cb2_vec) / (length(cb1.velocity) * length(cb1_to_cb2_vec))).acos();
-    let cb2_velocity_to_cb2_angle = (dot(cb2.velocity, cb1_to_cb2_vec) / (length(cb2.velocity) * length(cb1_to_cb2_vec))).acos();
+    // https://en.wikipedia.org/wiki/Elastic_collision
+    let cb1_collision_impulse = add(scale(cb1.velocity, (cb1.mass - cb2.mass) / (cb1.mass + cb2.mass)), scale(cb2.velocity, 2.0 * cb2.mass / (cb1.mass + cb2.mass)));
 
-    let sum_angles = cb1_velocity_to_cb2_angle + cb2_velocity_to_cb2_angle;
+    println!("{}, {:?}",cb1.id, cb1_collision_impulse);
 
-    return (true, sum_angles/cb2.mass, sum_angles/cb1.mass);
+    return (true, cb1_collision_impulse);
 }

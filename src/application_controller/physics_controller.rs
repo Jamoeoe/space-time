@@ -1,10 +1,10 @@
 use crate::{
     CelestialBody, application_controller,
-    linear_algebra_math::{add, scale, unit_vector_between_vectors},
+    linear_algebra_math::{add, length, scale, subtract, unit_vector_between_vectors},
     physics_math::{calculate_gravitational_pull, check_collision, distance_between_cbs_squared},
 };
 
-pub const SIM_SPEED: f64 = 2000000.0; // how fast the sim should move compared to realtime
+pub const SIM_SPEED: f64 = 100000.0; // how fast the sim should move compared to realtime
 pub const PER_TICK_SCALAR: f64 = SIM_SPEED / application_controller::TARGET_FPS;
 
 pub struct PhysicsController {
@@ -31,11 +31,10 @@ impl PhysicsController {
                             continue;
                     }
 
-                    let (collided, cb1_angle, cb2_angle) = check_collision(cb1, cb2, distance_squared);
+                    let (collided, collision_impulse) = check_collision(cb1, cb2, distance_squared);
 
                     if collided {
-                        let collision_energy = length(cb1.velocity) * cb1.mass + length(cb2.velocity) * cb2.mass;
-                        // calculate unit vector at degree
+                        cb_impulse = subtract(cb_impulse, collision_impulse);
                     }
 
                     let force = calculate_gravitational_pull(cb1.mass, cb2.mass, distance_squared);
@@ -43,9 +42,9 @@ impl PhysicsController {
                     let acceleration = force / cb1.mass;
 
                     let direction =
-                        unit_vector_between_vectors(cb1.cartesian_position, cb2.cartesian_position);
+                        subtract(cb1.cartesian_position, cb2.cartesian_position);
 
-                    cb_impulse = add(cb_impulse, scale(direction, -acceleration));
+                    cb_impulse = add(cb_impulse, scale(direction, -acceleration/length(direction)));
             }
 
             // save the overall impulse

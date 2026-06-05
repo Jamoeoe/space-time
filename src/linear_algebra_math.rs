@@ -115,3 +115,11 @@ pub fn convert_f64_matrix_to_f32_4x4(m1: [[f64; 4]; 4]) -> [[f32; 4]; 4] {
     }
     return converted;
 }
+
+pub fn rotate_vector(v: [f64; 3], k: [f64; 3], theta: f64) -> [f64; 3] {
+    let term1 = scale(v, theta.cos());
+    let term2 = scale(cross3(k, v), theta.sin());
+    let term3= scale(k, dot(k, v) * (1.0 - theta.cos()));
+    let rotated = add(add(term1, term2), term3);
+    return rotated;
+}
