@@ -1,6 +1,9 @@
 use crate::{
     application_controller::celestial_body::CelestialBody,
-    linear_algebra_math::{add, cross3, dot, length, normalize, rotate_vector, scale, subtract, unit_vector_between_vectors},
+    linear_algebra_math::{
+        cross3, dot, length, scale, subtract,
+        unit_vector_between_vectors,
+    },
 };
 
 pub const C: f64 = 299792458.0;
@@ -80,15 +83,39 @@ pub fn get_circular_orbital_velocity_at_height(
 }
 
 // if they are colliding, returns the velocity impulse of the first body in the collision
-pub fn check_collision(cb1: &CelestialBody, cb2: &CelestialBody, distance_squared: f64) -> (bool, [f64; 3]) {
+pub fn check_collision(
+    cb1: &CelestialBody,
+    cb2: &CelestialBody,
+    distance_squared: f64,
+) -> (bool, [f64; 3]) {
     if distance_squared > (cb1.radius + cb2.radius) * (cb1.radius + cb2.radius) {
         return (false, [0.0; 3]);
     }
 
+    // normal vector between the bodies
+    let n = subtract(cb2.cartesian_position, cb1.cartesian_position);
+
+    let n_len = length(n);
+
+    let unit_n = scale(n, 1.0 / n_len);
+
+    // length of the projections of each bodies velocities onto the normal vector
+    let cb1_p_len = dot(n, cb1.velocity) / n_len;
+    let cb2_p_len = dot(n, cb2.velocity) / n_len;
+
     // https://en.wikipedia.org/wiki/Elastic_collision
-    let cb1_collision_impulse = add(scale(cb1.velocity, (cb1.mass - cb2.mass) / (cb1.mass + cb2.mass)), scale(cb2.velocity, 2.0 * cb2.mass / (cb1.mass + cb2.mass)));
+    // the the velocity at which the first body will move away from the second body after the collision
+    let cb1_p2_len = (cb1.mass - cb2.mass) / (cb1.mass + cb2.mass) * cb1_p_len
+        + 2.0 * cb2.mass / (cb1.mass + cb2.mass) * cb2_p_len;
 
-    println!("{}, {:?}",cb1.id, cb1_collision_impulse);
+    // the projection of the inital velocity of cb1 onto the normal
+    let cb1_p1 = scale(unit_n, cb1_p_len);
 
-    return (true, cb1_collision_impulse);
+    // the projection of the final velocity of cb1 onto the normal
+    let cb1_p2 = scale(unit_n, cb1_p2_len);
+
+    // calculate the impulse to reach the final velocity
+    let cb1_v_final_impulse = subtract(cb1_p2, cb1_p1);
+
+    return (true, cb1_v_final_impulse);
 }

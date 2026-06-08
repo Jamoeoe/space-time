@@ -1,6 +1,6 @@
 use crate::{
     CelestialBody, application_controller,
-    linear_algebra_math::{add, length, scale, subtract, unit_vector_between_vectors},
+    linear_algebra_math::{add, length, scale, subtract},
     physics_math::{calculate_gravitational_pull, check_collision, distance_between_cbs_squared},
 };
 
@@ -20,44 +20,47 @@ impl PhysicsController {
 
     pub fn tick(&mut self) {
         // create the list of impulses so that they can be edited after the nested for loop (because borrow checker)
-        let mut gravity_impulses: Vec<[f64; 3]> = vec![];
+        let mut impulses: Vec<[f64; 3]> = vec![];
 
         for cb1 in self.celestial_bodies.iter() {
             let mut cb_impulse: [f64; 3] = [0.0, 0.0, 0.0];
 
             for cb2 in self.celestial_bodies.iter() {
-                    let distance_squared = distance_between_cbs_squared(cb1, cb2);
-                    if distance_squared < 1.0 {
-                            continue;
-                    }
+                let distance_squared = distance_between_cbs_squared(cb1, cb2);
+                if distance_squared < 1.0 {
+                    continue;
+                }
 
-                    let (collided, collision_impulse) = check_collision(cb1, cb2, distance_squared);
+                let (collided, collision_impulse) = check_collision(cb1, cb2, distance_squared);
 
-                    if collided {
-                        cb_impulse = subtract(cb_impulse, collision_impulse);
-                    }
+                if collided {
+                    cb_impulse = add(cb_impulse, collision_impulse);
+                }
 
-                    let force = calculate_gravitational_pull(cb1.mass, cb2.mass, distance_squared);
+                let force = calculate_gravitational_pull(cb1.mass, cb2.mass, distance_squared);
 
-                    let acceleration = force / cb1.mass;
+                let acceleration = force / cb1.mass;
 
-                    let direction =
-                        subtract(cb1.cartesian_position, cb2.cartesian_position);
+                let direction = subtract(cb1.cartesian_position, cb2.cartesian_position);
 
-                    cb_impulse = add(cb_impulse, scale(direction, -acceleration/length(direction)));
+                cb_impulse = add(
+                    cb_impulse,
+                    scale(
+                        direction,
+                        -acceleration / length(direction) * PER_TICK_SCALAR,
+                    ),
+                );
             }
 
             // save the overall impulse
-            gravity_impulses.push(cb_impulse);
+            impulses.push(cb_impulse);
         }
 
         // apply the impulse to each celestial body
         for (i, cb) in self.celestial_bodies.iter_mut().enumerate() {
-            let cb_impulse = gravity_impulses[i];
+            let cb_impulse = impulses[i];
 
-            // the rate at which things accelerate should scale with the speed of the sim
-            let time_scaled_impulse = scale(cb_impulse, PER_TICK_SCALAR);
-            cb.velocity = add(cb.velocity, time_scaled_impulse);
+            cb.velocity = add(cb.velocity, cb_impulse);
 
             cb.apply_velocity();
         }
