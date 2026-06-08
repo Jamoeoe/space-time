@@ -97,8 +97,6 @@ pub fn check_collision(
 
     let n_len = length(n);
 
-    let unit_n = scale(n, 1.0 / n_len);
-
     // length of the projections of each bodies velocities onto the normal vector
     let cb1_p_len = dot(n, cb1.velocity) / n_len;
     let cb2_p_len = dot(n, cb2.velocity) / n_len;
@@ -109,10 +107,10 @@ pub fn check_collision(
         + 2.0 * cb2.mass / (cb1.mass + cb2.mass) * cb2_p_len;
 
     // the projection of the inital velocity of cb1 onto the normal
-    let cb1_p1 = scale(unit_n, cb1_p_len);
+    let cb1_p1 = scale(n, cb1_p_len / n_len);
 
     // the projection of the final velocity of cb1 onto the normal
-    let cb1_p2 = scale(unit_n, cb1_p2_len);
+    let cb1_p2 = scale(n, cb1_p2_len / n_len);
 
     // calculate the impulse to reach the final velocity
     let cb1_v_final_impulse = subtract(cb1_p2, cb1_p1);

@@ -5,7 +5,7 @@ use rand::prelude::*;
 
 use crate::{
     application_controller::{SimApplicationController, camera::Camera, celestial_body::*, shapes},
-    physics_math::{distance_between_points_squared, get_circular_orbital_velocity_at_height},
+    physics_math::distance_between_points_squared,
 };
 
 pub mod application_controller;
@@ -29,7 +29,8 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
-    let earth = CelestialBody::new(
+
+ /*    let earth = CelestialBody::new(
         0,
         6.38 * 10.0_f64.powi(7),
         5.972 * 10.0_f64.powi(24),
@@ -45,11 +46,7 @@ fn main() {
         [3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
     );
 
-    let bodies = vec![earth, moon];
-
-    /*
-
-    let mars = CelestialBody::new(
+        let mars = CelestialBody::new(
         2,
         3.4 * 10.0_f64.powi(7),
         6.417 * 10.0_f64.powi(23),
@@ -57,22 +54,18 @@ fn main() {
         [-3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
     );
 
-    let (earth_v, moon_v) = get_circular_orbital_velocity_at_height(&earth, &moon);
+    let bodies = vec![earth, moon]; */
 
-    earth.set_velocity(earth_v);
-    moon.set_velocity(moon_v);
-
-    let bodies = vec![earth, moon, mars]; */
-
-    /*
-        let mut rng = rand::rng();
+    
+    let mut rng = rand::rng();
 
     let mut bodies: Vec<CelestialBody> = vec![];
-    for i in 0..200 {
+    for i in 0..100 {
+        let mass_radius_scalar = rng.random::<f64>();
         let body = CelestialBody::new(
             i,
-            (5.0 + rng.random::<f64>()) * 10.0_f64.powi(7),
-            (5.0 + rng.random::<f64>()) * 10.0_f64.powi(23),
+            (5.0 + mass_radius_scalar) * 10.0_f64.powi(7),
+            (5.0 + mass_radius_scalar) * 10.0_f64.powi(23),
             [
                 1000.0 * (rng.random::<f64>() - 0.5),
                 1000.0 * (rng.random::<f64>() - 0.5),
@@ -86,7 +79,7 @@ fn main() {
         );
         bodies.push(body);
     }
-     */
+     
 
     let mut furthest_dst_from_origin = 0.0_f64;
     let origin = [0.0_f64, 0.0_f64, 0.0_f64];
