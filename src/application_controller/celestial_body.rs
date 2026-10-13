@@ -44,6 +44,8 @@ impl CelestialBody {
         velocity: [f64; 3],
         //color: f64,
         cartesian_position: [f64; 3],
+        angular_velocity: f64,
+        axis_of_rotation: f64,
     ) -> CelestialBody {
         let (rho, theta, phi) = cartesian_to_polar(
             cartesian_position[0],

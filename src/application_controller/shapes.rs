@@ -1,6 +1,7 @@
 use crate::{application_controller::Vertex, physics_math::polar_to_cartesian};
 use glium::{Display, VertexBuffer};
 use glutin::surface::WindowSurface;
+use std::f64::consts::PI;
 
 pub fn get_buffer(display: &Display<WindowSurface>, vertices: &[Vertex]) -> VertexBuffer<Vertex> {
     match glium::VertexBuffer::new(display, vertices) {
@@ -15,9 +16,9 @@ pub fn make_sphere_lines(precision: i32) -> Vec<Vertex> {
     let mut shape = vec![];
 
     for theta in 0..precision + 1 {
-        let theta_step = std::f64::consts::PI / precision as f64 * theta as f64;
+        let theta_step = PI / precision as f64 * theta as f64;
         for phi in 0..precision + 1 {
-            let phi_step = 2.0 * std::f64::consts::PI / precision as f64 * phi as f64;
+            let phi_step = 2.0 * PI / precision as f64 * phi as f64;
 
             let (x, y, z) = polar_to_cartesian(1.0, theta_step, phi_step);
             shape.push(Vertex {

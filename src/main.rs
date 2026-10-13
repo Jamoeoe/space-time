@@ -1,5 +1,6 @@
 #[macro_use]
 extern crate glium;
+
 use glium::winit::event_loop::EventLoop;
 use rand::prelude::*;
 
@@ -76,6 +77,8 @@ fn main() {
                 10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
                 10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
             ],
+            rng.random::<f64>() * std::f64::consts::PI / 10.0,
+            rng.random::<f64>() * std::f64::consts::PI * 2.0,
         );
         bodies.push(body);
     }

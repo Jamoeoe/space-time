@@ -6,13 +6,8 @@ use crate::{
     },
 };
 use glium::{
-    Display, Program, Surface, VertexBuffer,
-    index::NoIndices,
-    winit::{
-        application::ApplicationHandler,
-        event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
-        event_loop,
-        window::Window,
+    Display, Program, Surface, VertexBuffer, index::NoIndices, winit::{
+        application::ApplicationHandler, event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent}, event_loop, keyboard::{self, Key::{self, Unidentified}, PhysicalKey, KeyCode}, window::Window,
     },
 };
 use std::{
@@ -38,9 +33,9 @@ const TARGET_FRAMETIME: Duration =
 pub struct SimApplicationController {
     window: Window,
     display: Display<glutin::surface::WindowSurface>,
-    camera: Camera,
+    cameras: [Camera; 2],
+    active_camera: usize,
     physics_controller: PhysicsController,
-
     cb_vertex_buffer: VertexBuffer<Vertex>,
     cb_program: Program,
     cb_indices: NoIndices,
@@ -57,7 +52,7 @@ impl SimApplicationController {
     pub fn new(
         window: Window,
         display: Display<glutin::surface::WindowSurface>,
-        camera: Camera,
+        cameras: [Camera; 2],
         celestial_bodies: Vec<CelestialBody>,
         cb_vertex_buffer: glium::VertexBuffer<Vertex>,
         scene_scale: f64,
@@ -73,7 +68,10 @@ impl SimApplicationController {
         return SimApplicationController {
             display: display,
             window: window,
-            camera: camera,
+
+            cameras: cameras,
+            active_camera: 0,
+
             physics_controller: physics_controller::PhysicsController::new(celestial_bodies),
 
             cb_vertex_buffer: cb_vertex_buffer,
@@ -125,8 +123,8 @@ impl ApplicationHandler for SimApplicationController {
                 let mut target = self.display.draw();
                 target.clear_color(0.0, 0.0, 0.0, 1.0);
 
-                let perspective = self.camera.get_perspective(&target);
-                let view = self.camera.look_at();
+                let perspective = self.cameras[self.active_camera].get_perspective(&target);
+                let view = self.cameras[self.active_camera].look_at();
 
                 for celestial_body in &self.physics_controller.celestial_bodies {
                     // controls scale and position of each object
@@ -180,7 +178,8 @@ impl ApplicationHandler for SimApplicationController {
                     let d_x = self.last_mouse_position[0] - position.x;
                     let d_y = self.last_mouse_position[1] - position.y;
 
-                    self.camera.modify_position_polar(
+                    // modify only the celestial camera in position 0
+                    self.cameras[0].modify_position_polar(
                         0.0,
                         d_y * y_sensitivity,
                         -d_x * x_sensitivity,
@@ -196,13 +195,41 @@ impl ApplicationHandler for SimApplicationController {
 
                 match delta {
                     MouseScrollDelta::LineDelta(_, d_rho) => {
-                        self.camera.modify_position_polar(
+                        // modify only the celestial camera in position 0
+                        self.cameras[0].modify_position_polar(
                             -d_rho as f64 * zoom_sensitivity,
                             0.0,
                             0.0,
                         );
                     }
                     _ => {}
+                }
+            }
+
+            WindowEvent::KeyboardInput { event, is_synthetic, .. } => {
+                if is_synthetic {
+                    return
+                }
+
+                match event.physical_key {
+                    PhysicalKey::Code(key_code) => {
+                        match key_code {
+                            KeyCode::KeyW => {
+
+                            }
+                            KeyCode::KeyA => {
+
+                            }
+                            KeyCode::KeyS => {
+
+                            }
+                            KeyCode::KeyD => {
+
+                            }
+                            _ => {}
+                        }
+                    }
+                    PhysicalKey::Unidentified(_) => {}
                 }
             }
             _ => {}
