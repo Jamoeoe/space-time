@@ -1,9 +1,6 @@
 use crate::{
     application_controller::celestial_body::CelestialBody,
-    linear_algebra_math::{
-        cross3, dot, length, scale, subtract,
-        unit_vector_between_vectors,
-    },
+    linear_algebra_math::{cross3, dot, length, scale, subtract, unit_vector_between_vectors},
 };
 
 pub const C: f64 = 299792458.0;

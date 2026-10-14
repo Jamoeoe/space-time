@@ -98,13 +98,14 @@ impl Camera {
         self.polar_position = [rho, theta, phi];
         let (x, y, z) = polar_to_cartesian(rho, theta, phi);
         self.cartesian_position = [x, y, z];
-                println!("t:{theta}, p:{phi}");
-
+        //println!("t:{theta}, p:{phi}");
     }
 
     pub fn modify_position_polar(&mut self, rho: f64, theta: f64, phi: f64) {
         let phi_phlipper: f64;
-        if self.polar_position[1] + theta != (self.polar_position[1] + theta) % (2.0 * std::f64::consts::PI) {
+        if self.polar_position[1] + theta
+            != (self.polar_position[1] + theta) % (2.0 * std::f64::consts::PI)
+        {
             phi_phlipper = -1.0;
             println!("phlipped");
         } else {

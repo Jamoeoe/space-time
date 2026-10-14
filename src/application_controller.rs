@@ -6,8 +6,16 @@ use crate::{
     },
 };
 use glium::{
-    Display, Program, Surface, VertexBuffer, index::NoIndices, winit::{
-        application::ApplicationHandler, event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent}, event_loop, keyboard::{self, Key::{self, Unidentified}, PhysicalKey, KeyCode}, window::Window,
+    Display, Program, Surface, VertexBuffer,
+    index::NoIndices,
+    winit::{
+        application::ApplicationHandler,
+        event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
+        event_loop,
+        keyboard::{
+            KeyCode, PhysicalKey,
+        },
+        window::Window,
     },
 };
 use std::{
@@ -57,7 +65,7 @@ impl SimApplicationController {
         cb_vertex_buffer: glium::VertexBuffer<Vertex>,
         scene_scale: f64,
     ) -> SimApplicationController {
-        let cb_indices = glium::index::NoIndices(glium::index::PrimitiveType::LineLoop);
+        let cb_indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
 
         let cb_program;
         match glium::Program::from_source(&display, CB_VERTEX_SHADER, CB_FRAGMENT_SHADER, None) {
@@ -140,8 +148,15 @@ impl ApplicationHandler for SimApplicationController {
                         ],
                     ];
 
-                    let uniforms = uniform! { perspective: perspective, view: view, model_matrix: model_matrix };
+                    let light = [0.0, 0.0, 0.0_f32];
 
+                    let uniforms = uniform! {
+                        perspective: perspective, 
+                        view: view, 
+                        model_matrix: model_matrix,
+                        ulight: light 
+                    };
+                    
                     match target.draw(
                         &self.cb_vertex_buffer,
                         &self.cb_indices,
@@ -206,29 +221,24 @@ impl ApplicationHandler for SimApplicationController {
                 }
             }
 
-            WindowEvent::KeyboardInput { event, is_synthetic, .. } => {
+            WindowEvent::KeyboardInput {
+                event,
+                is_synthetic,
+                ..
+            } => {
                 if is_synthetic {
-                    return
+                    return;
                 }
 
                 match event.physical_key {
-                    PhysicalKey::Code(key_code) => {
-                        match key_code {
-                            KeyCode::KeyW => {
-
-                            }
-                            KeyCode::KeyA => {
-
-                            }
-                            KeyCode::KeyS => {
-
-                            }
-                            KeyCode::KeyD => {
-
-                            }
-                            _ => {}
-                        }
-                    }
+                    PhysicalKey::Code(key_code) => match key_code {
+                        KeyCode::KeyW => {}
+                        KeyCode::KeyA => {}
+                        KeyCode::KeyS => {}
+                        KeyCode::KeyD => {}
+                        KeyCode::Space => {}
+                        _ => {}
+                    },
                     PhysicalKey::Unidentified(_) => {}
                 }
             }

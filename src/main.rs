@@ -4,6 +4,8 @@ extern crate glium;
 use glium::winit::event_loop::EventLoop;
 use rand::prelude::*;
 
+use std::{f64::consts::PI, vec};
+
 use crate::{
     application_controller::{SimApplicationController, camera::Camera, celestial_body::*, shapes},
     physics_math::distance_between_points_squared,
@@ -30,36 +32,34 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
-
- /*    let earth = CelestialBody::new(
+        let earth = CelestialBody::new(
         0,
         6.38 * 10.0_f64.powi(7),
         5.972 * 10.0_f64.powi(24),
-        [0.0_f64, 0.0_f64, 0.0_f64],
-        [0.0_f64, 0.0_f64, 2.0],
+        [0.0, 0.0, 0.0],
+        [0.0, 0.0, 1000000000.0],
+        0.0,
+        0.0,
     );
 
-    let moon = CelestialBody::new(
+    /*
+        let moon = CelestialBody::new(
         1,
         1.73 * 10.0_f64.powi(7),
         7.346 * 10.0_f64.powi(22),
         [100.0_f64, 100.0_f64, 0.0_f64],
         [3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
+        0.0,
+        0.0,
     );
+     */
 
-        let mars = CelestialBody::new(
-        2,
-        3.4 * 10.0_f64.powi(7),
-        6.417 * 10.0_f64.powi(23),
-        [400.0_f64, 400.0_f64, 400.0_f64],
-        [-3.84400000 * 10.0_f64.powi(8), 0.0_f64, 0.0_f64],
-    );
 
-    let bodies = vec![earth, moon]; */
+    let bodies = vec![earth];
 
-    
-    let mut rng = rand::rng();
+    //let mut rng = rand::rng();
 
+    /*
     let mut bodies: Vec<CelestialBody> = vec![];
     for i in 0..100 {
         let mass_radius_scalar = rng.random::<f64>();
@@ -77,12 +77,12 @@ fn main() {
                 10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
                 10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
             ],
-            rng.random::<f64>() * std::f64::consts::PI / 10.0,
-            rng.random::<f64>() * std::f64::consts::PI * 2.0,
+            rng.random::<f64>() * PI / 10.0,
+            rng.random::<f64>() * PI * 2.0,
         );
         bodies.push(body);
     }
-     
+    */
 
     let mut furthest_dst_from_origin = 0.0_f64;
     let origin = [0.0_f64, 0.0_f64, 0.0_f64];
@@ -94,12 +94,23 @@ fn main() {
         }
     }
 
-    let camera = Camera::new(
+    let celestial_camera = Camera::new(
         // starting position for the camera
         [0.0_f64, 30000000.0_f64, furthest_dst_from_origin.sqrt()],
         origin, // point at origin
         // fov
-        std::f64::consts::PI / 4.0,
+        PI / 4.0,
+        // doesnt render anything past this point on the z axis
+        furthest_dst_from_origin,
+        // doesnt render anything closer than this point on the z axis
+        0.1,
+    );
+
+    let terrestrial_camera = Camera::new(
+        // starting position for the camera
+        [0.0_f64, 30000000.0_f64, furthest_dst_from_origin.sqrt()],
+        origin, // point at origin
+        PI / 4.0,
         // doesnt render anything past this point on the z axis
         furthest_dst_from_origin,
         // doesnt render anything closer than this point on the z axis
@@ -107,12 +118,13 @@ fn main() {
     );
 
     // create vertex buffer for the celestial bodies
-    let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
+    //let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
+    let cb_vertex_buffer = shapes::get_buffer(&display, &&shapes::make_sphere_triangles(20));
 
     let mut app = SimApplicationController::new(
         window,
         display,
-        camera,
+        [celestial_camera, terrestrial_camera],
         bodies,
         cb_vertex_buffer,
         furthest_dst_from_origin.sqrt(),
