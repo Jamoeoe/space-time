@@ -118,14 +118,14 @@ fn main() {
 
     // create vertex buffer for the celestial bodies
     //let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
-    let shape = shapes::make_sphere_triangles(20);
-    let cb_vertex_normals = shapes::calculate_normals_of_triangles(shape.clone());
+    let (shape, normals) = shapes::make_sphere_triangles(20);
 
     println!("{}", shape.len());
-    println!("{}", cb_vertex_normals.len());
+    println!("{}", normals.len());
 
-    let cb_vertex_buffer = shapes::get_buffer(&display, &&shapes::make_sphere_triangles(20));
-    let cb_vertex_normals_buffer = shapes::get_buffer(&display, &&cb_vertex_normals);
+
+    let cb_vertex_buffer = shapes::get_buffer(&display, &shape);
+    let cb_vertex_normals_buffer = shapes::get_buffer(&display, &normals);
 
     let mut app = SimApplicationController::new(
         window,

@@ -66,9 +66,9 @@ pub fn make_sphere_lines(precision: u32) -> Vec<Vertex> {
 pub fn make_sphere_triangles(precision: u32) -> (Vec<Vertex>, Vec<Normal>) {
     let (vertices, position_map) = calculate_sphere_vertices(precision);
 
-    let triangle_normals = calculate_normals_of_triangles(&vertices, position_map);
+    let vertex_triangle_normals_map = calculate_normals_of_triangles(&vertices, position_map);
 
-    let vertex_normals: Vec<Normal> = calculate_vertex_normals(precision, triangle_normals_map);
+    let vertex_normals: Vec<Normal> = calculate_vertex_normals(precision, vertex_triangle_normals_map);
 
     return (vertices, vertex_normals);
 }

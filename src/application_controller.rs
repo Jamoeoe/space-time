@@ -4,6 +4,7 @@ use crate::{
         celestial_body::{CB_FRAGMENT_SHADER, CB_VERTEX_SHADER, CelestialBody},
         physics_controller::PhysicsController,
     },
+    shapes::{Vertex, Normal}
 };
 use glium::{
     Display, Program, Surface, VertexBuffer,
