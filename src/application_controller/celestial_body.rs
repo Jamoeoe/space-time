@@ -14,18 +14,23 @@ pub const CB_VERTEX_SHADER: &'static str = r#"
         out vec3 v_normal;
 
         void main() {
-            v_normal = transpose(inverse(mat3(matrix))) * normal;
+            v_normal = transpose(inverse(mat3(model_matrix))) * normal;
             gl_Position = perspective * view * model_matrix * vec4(position, 1.0);
         }
     "#;
 
 pub const CB_FRAGMENT_SHADER: &'static str = r#"
-        #version 150
+        #version 140
 
+        in vec3 v_normal;
         out vec4 color;
+        uniform vec3 u_light;
 
         void main() {
-            color = vec4(1.0, 0.0, 0.0, 1.0);
+            float brightness = dot(normalize(v_normal), normalize(u_light));
+            vec3 dark_color = vec3(0.6, 0.0, 0.0);
+            vec3 regular_color = vec3(1.0, 0.0, 0.0);
+            color = vec4(mix(dark_color, regular_color, brightness), 1.0);
         }
     "#;
 
@@ -34,7 +39,7 @@ pub struct CelestialBody {
     pub radius: f64,
     pub mass: f64,
     pub velocity: [f64; 3],
-    //color: f64,
+    //color: [f64; 3],
     pub cartesian_position: [f64; 3],
     polar_position: [f64; 3],
 }
@@ -45,10 +50,10 @@ impl CelestialBody {
         radius: f64,
         mass: f64,
         velocity: [f64; 3],
-        //color: f64,
+        //color: [f64; 3],
         cartesian_position: [f64; 3],
-        angular_velocity: f64,
-        axis_of_rotation: f64,
+        //angular_velocity: f64,
+        //axis_of_rotation: f64,
     ) -> CelestialBody {
         let (rho, theta, phi) = cartesian_to_polar(
             cartesian_position[0],

@@ -1,3 +1,4 @@
+// length / magnitude of a vector
 pub fn length<const N: usize>(v: [f64; N]) -> f64 {
     let mut len = 0.0;
     for i in 0..N {
@@ -7,6 +8,7 @@ pub fn length<const N: usize>(v: [f64; N]) -> f64 {
     return len;
 }
 
+// squared length / magnitude of a vector
 pub fn length2<const N: usize>(v: [f64; N]) -> f64 {
     let mut len2 = 0.0;
     for i in 0..N {
@@ -15,6 +17,7 @@ pub fn length2<const N: usize>(v: [f64; N]) -> f64 {
     return len2;
 }
 
+// multiply each value of a vector by a scalar
 pub fn scale<const N: usize>(v: [f64; N], scalar: f64) -> [f64; N] {
     let mut scaled = [0.0f64; N];
     for i in 0..N {
@@ -23,11 +26,13 @@ pub fn scale<const N: usize>(v: [f64; N], scalar: f64) -> [f64; N] {
     return scaled;
 }
 
+// normalize vector to magnitude of 1
 pub fn normalize<const N: usize>(v: [f64; N]) -> [f64; N] {
     let length = length(v);
     return scale(v, 1.0 / length);
 }
 
+// adds the two vectors
 pub fn add<const N: usize>(v1: [f64; N], v2: [f64; N]) -> [f64; N] {
     let mut sum = [0.0f64; N];
     for i in 0..N {
@@ -36,10 +41,12 @@ pub fn add<const N: usize>(v1: [f64; N], v2: [f64; N]) -> [f64; N] {
     return sum;
 }
 
+// subtracts the second vector from the first
 pub fn subtract<const N: usize>(v1: [f64; N], v2: [f64; N]) -> [f64; N] {
     return add(v1, scale(v2, -1.0));
 }
 
+// returns the dot product
 pub fn dot<const N: usize>(v1: [f64; N], v2: [f64; N]) -> f64 {
     let mut product = 0.0;
     for i in 0..N {
@@ -50,6 +57,7 @@ pub fn dot<const N: usize>(v1: [f64; N], v2: [f64; N]) -> f64 {
 
 //    let theta = (dot(v1, v2) / (length(v1) * length(v2))).acos();
 
+// returns cross product of two 3 dimensions vectors
 pub fn cross3(v1: [f64; 3], v2: [f64; 3]) -> [f64; 3] {
     return [
         v1[1] * v2[2] - v1[2] * v2[1],
@@ -58,6 +66,7 @@ pub fn cross3(v1: [f64; 3], v2: [f64; 3]) -> [f64; 3] {
     ];
 }
 
+// multiplies a MxN matrix and NxP matrix returns MxP matrix
 pub fn multiply_matrices<const N: usize, const M: usize, const P: usize>(
     m1: [[f64; M]; N],
     m2: [[f64; N]; P],
@@ -86,10 +95,47 @@ pub fn transpose_matrix<const N: usize, const M: usize>(m: [[f64; M]; N]) -> [[f
     return transposed;
 }
 
-pub fn equals<const N: usize, const M: usize>(m1: [[f64; M]; N], m2: [[f64; M]; N]) -> bool {
+pub fn f32_eq(f1: f32, f2: f32, epsilon: Option<f32>) -> bool {
+    let ep: f32;
+    match epsilon {
+        Some(float) => {
+            ep = float;
+        }
+        None => {
+            ep = f32::EPSILON;
+        }
+    }
+
+    return (f1 - f2).abs() < ep;
+}
+
+pub fn f64_eq(f1: f64, f2: f64, epsilon: Option<f64>) -> bool {
+    let ep: f64;
+    match epsilon {
+        Some(float) => {
+            ep = float;
+        }
+        None => {
+            ep = f64::EPSILON;
+        }
+    }
+
+    return (f1 - f2).abs() < ep;
+}
+
+/*
+returns if two NxM matrices are equal,
+epsilon is the max difference between elements that can be considered equal
+set equal to none to use default value of 10 ^ -10
+*/
+pub fn equals<const N: usize, const M: usize>(
+    m1: [[f64; M]; N],
+    m2: [[f64; M]; N],
+    epsilon: Option<f64>,
+) -> bool {
     for i in 0..N {
         for j in 0..M {
-            if (m1[i][j] - m2[i][j]).abs() > 0.00000001 {
+            if !f64_eq(m1[i][j], m2[i][j], epsilon) {
                 return false;
             }
         }

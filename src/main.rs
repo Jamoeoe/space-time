@@ -2,9 +2,9 @@
 extern crate glium;
 
 use glium::winit::event_loop::EventLoop;
-use rand::prelude::*;
+//use rand::prelude::*;
 
-use std::{f64::consts::PI, vec};
+use std::{f64::consts::PI, println, vec};
 
 use crate::{
     application_controller::{SimApplicationController, camera::Camera, celestial_body::*, shapes},
@@ -32,14 +32,14 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
-        let earth = CelestialBody::new(
+    let earth = CelestialBody::new(
         0,
         6.38 * 10.0_f64.powi(7),
         5.972 * 10.0_f64.powi(24),
         [0.0, 0.0, 0.0],
         [0.0, 0.0, 1000000000.0],
-        0.0,
-        0.0,
+        //0.0,
+        //0.0,
     );
 
     /*
@@ -53,7 +53,6 @@ fn main() {
         0.0,
     );
      */
-
 
     let bodies = vec![earth];
 
@@ -119,7 +118,14 @@ fn main() {
 
     // create vertex buffer for the celestial bodies
     //let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
+    let shape = shapes::make_sphere_triangles(20);
+    let cb_vertex_normals = shapes::calculate_normals_of_triangles(shape.clone());
+
+    println!("{}", shape.len());
+    println!("{}", cb_vertex_normals.len());
+
     let cb_vertex_buffer = shapes::get_buffer(&display, &&shapes::make_sphere_triangles(20));
+    let cb_vertex_normals_buffer = shapes::get_buffer(&display, &&cb_vertex_normals);
 
     let mut app = SimApplicationController::new(
         window,
@@ -127,6 +133,7 @@ fn main() {
         [celestial_camera, terrestrial_camera],
         bodies,
         cb_vertex_buffer,
+        cb_vertex_normals_buffer,
         furthest_dst_from_origin.sqrt(),
     );
 

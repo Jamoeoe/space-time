@@ -12,9 +12,7 @@ use glium::{
         application::ApplicationHandler,
         event::{ElementState, MouseButton, MouseScrollDelta, WindowEvent},
         event_loop,
-        keyboard::{
-            KeyCode, PhysicalKey,
-        },
+        keyboard::{KeyCode, PhysicalKey},
         window::Window,
     },
 };
@@ -28,12 +26,6 @@ pub mod celestial_body;
 pub mod physics_controller;
 pub mod shapes;
 
-#[derive(Clone, Copy)]
-pub struct Vertex {
-    position: [f64; 3],
-}
-implement_vertex!(Vertex, position);
-
 pub const TARGET_FPS: f64 = 60.0;
 const TARGET_FRAMETIME: Duration =
     Duration::new(0, (1.0 / TARGET_FPS * 1000000000.0).round() as u32);
@@ -45,6 +37,7 @@ pub struct SimApplicationController {
     active_camera: usize,
     physics_controller: PhysicsController,
     cb_vertex_buffer: VertexBuffer<Vertex>,
+    cb_vertex_normals_buffer: VertexBuffer<Normal>,
     cb_program: Program,
     cb_indices: NoIndices,
 
@@ -63,6 +56,7 @@ impl SimApplicationController {
         cameras: [Camera; 2],
         celestial_bodies: Vec<CelestialBody>,
         cb_vertex_buffer: glium::VertexBuffer<Vertex>,
+        cb_vertex_normals_buffer: VertexBuffer<Normal>,
         scene_scale: f64,
     ) -> SimApplicationController {
         let cb_indices = glium::index::NoIndices(glium::index::PrimitiveType::TrianglesList);
@@ -83,6 +77,7 @@ impl SimApplicationController {
             physics_controller: physics_controller::PhysicsController::new(celestial_bodies),
 
             cb_vertex_buffer: cb_vertex_buffer,
+            cb_vertex_normals_buffer: cb_vertex_normals_buffer,
             cb_program: cb_program,
             cb_indices: cb_indices,
 
@@ -148,17 +143,17 @@ impl ApplicationHandler for SimApplicationController {
                         ],
                     ];
 
-                    let light = [0.0, 0.0, 0.0_f32];
+                    let light = [0.0, 0.0, 0.0f32];
 
                     let uniforms = uniform! {
-                        perspective: perspective, 
-                        view: view, 
+                        perspective: perspective,
+                        view: view,
                         model_matrix: model_matrix,
-                        ulight: light 
+                        ulight: light
                     };
-                    
+
                     match target.draw(
-                        &self.cb_vertex_buffer,
+                        (&self.cb_vertex_buffer, &self.cb_vertex_normals_buffer),
                         &self.cb_indices,
                         &self.cb_program,
                         &uniforms,
