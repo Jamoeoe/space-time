@@ -4,7 +4,7 @@ use crate::{
         celestial_body::{CB_FRAGMENT_SHADER, CB_VERTEX_SHADER, CelestialBody},
         physics_controller::PhysicsController,
     },
-    shapes::{Vertex, Normal}
+    shapes::{Normal, Vertex},
 };
 use glium::{
     Display, Program, Surface, VertexBuffer,
@@ -144,13 +144,19 @@ impl ApplicationHandler for SimApplicationController {
                         ],
                     ];
 
-                    let light = [0.0, 0.0, 0.0f32];
+                    let light = [1.0, 0.0, 0.0f32];
 
                     let uniforms = uniform! {
                         perspective: perspective,
                         view: view,
                         model_matrix: model_matrix,
-                        ulight: light
+                        u_light: light
+                    };
+
+                    let draw_parameters = glium::DrawParameters {
+                        backface_culling:
+                            glium::draw_parameters::BackfaceCullingMode::CullClockwise,
+                        ..Default::default()
                     };
 
                     match target.draw(
@@ -158,7 +164,7 @@ impl ApplicationHandler for SimApplicationController {
                         &self.cb_indices,
                         &self.cb_program,
                         &uniforms,
-                        &Default::default(),
+                        &draw_parameters,
                     ) {
                         Ok(_) => {}
                         Err(e) => println!("got sad while drawing :( {e}"),

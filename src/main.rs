@@ -7,7 +7,12 @@ use glium::winit::event_loop::EventLoop;
 use std::{f64::consts::PI, println, vec};
 
 use crate::{
-    application_controller::{SimApplicationController, camera::Camera, celestial_body::*, shapes},
+    application_controller::{
+        SimApplicationController,
+        camera::Camera,
+        celestial_body::*,
+        shapes::{self, Normal},
+    },
     physics_math::distance_between_points_squared,
 };
 
@@ -107,7 +112,7 @@ fn main() {
 
     let terrestrial_camera = Camera::new(
         // starting position for the camera
-        [0.0_f64, 30000000.0_f64, furthest_dst_from_origin.sqrt()],
+        [0.0_f64, 0.0, furthest_dst_from_origin.sqrt()],
         origin, // point at origin
         PI / 4.0,
         // doesnt render anything past this point on the z axis
@@ -117,12 +122,7 @@ fn main() {
     );
 
     // create vertex buffer for the celestial bodies
-    //let cb_vertex_buffer = shapes::get_buffer(&display, &shapes::make_sphere_lines(20));
-    let (shape, normals) = shapes::make_sphere_triangles(20);
-
-    println!("{}", shape.len());
-    println!("{}", normals.len());
-
+    let (shape, normals) = shapes::calculate_sphere_vertices(40);
 
     let cb_vertex_buffer = shapes::get_buffer(&display, &shape);
     let cb_vertex_normals_buffer = shapes::get_buffer(&display, &normals);
