@@ -2,7 +2,7 @@ use crate::physics_math::polar_to_cartesian;
 use core::panic;
 use glium::{Display, VertexBuffer};
 use glutin::surface::WindowSurface;
-use std::{collections::HashMap, f64::consts::PI, vec};
+use std::{f64::consts::PI, vec};
 
 #[derive(Clone, Copy)]
 pub struct Vertex {

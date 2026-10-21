@@ -11,7 +11,7 @@ use crate::{
         SimApplicationController,
         camera::Camera,
         celestial_body::*,
-        shapes::{self, Normal},
+        shapes::{get_buffer, calculate_sphere_vertices},
     },
     physics_math::distance_between_points_squared,
 };
@@ -122,10 +122,10 @@ fn main() {
     );
 
     // create vertex buffer for the celestial bodies
-    let (shape, normals) = shapes::calculate_sphere_vertices(40);
+    let (shape, normals) = calculate_sphere_vertices(40);
 
-    let cb_vertex_buffer = shapes::get_buffer(&display, &shape);
-    let cb_vertex_normals_buffer = shapes::get_buffer(&display, &normals);
+    let cb_vertex_buffer = get_buffer(&display, &shape);
+    let cb_vertex_normals_buffer = get_buffer(&display, &normals);
 
     let mut app = SimApplicationController::new(
         window,

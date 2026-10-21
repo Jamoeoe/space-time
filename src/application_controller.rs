@@ -3,8 +3,8 @@ use crate::{
     application_controller::{
         celestial_body::{CB_FRAGMENT_SHADER, CB_VERTEX_SHADER, CelestialBody},
         physics_controller::PhysicsController,
+        shapes::{Normal, Vertex},
     },
-    shapes::{Normal, Vertex},
 };
 use glium::{
     Display, Program, Surface, VertexBuffer,
