@@ -87,7 +87,7 @@ impl CelestialBody {
     }
 
     pub fn modify_position_cartesian(&mut self, x: f64, y: f64, z: f64) {
-        self.update_position_polar(
+        self.update_position_cartesian(
             self.cartesian_position[0] + x,
             self.cartesian_position[1] + y,
             self.cartesian_position[2] + z,
@@ -96,7 +96,7 @@ impl CelestialBody {
 
     pub fn update_position_cartesian(&mut self, x: f64, y: f64, z: f64) {
         self.cartesian_position = [x, y, z];
-        let (rho, theta, phi) = polar_to_cartesian(x, y, z);
+        let (rho, theta, phi) = cartesian_to_polar(x, y, z);
         self.polar_position = [rho, theta, phi];
     }
 

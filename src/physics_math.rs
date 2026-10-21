@@ -88,7 +88,7 @@ pub fn check_collision(
     if distance_squared > (cb1.radius + cb2.radius) * (cb1.radius + cb2.radius) {
         return (false, [0.0; 3]);
     }
-
+    
     // normal vector between the bodies
     let n = subtract(cb2.cartesian_position, cb1.cartesian_position);
 

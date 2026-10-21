@@ -33,6 +33,7 @@ impl PhysicsController {
 
                 let (collided, collision_impulse) = check_collision(cb1, cb2, distance_squared);
 
+
                 if collided {
                     cb_impulse = add(cb_impulse, collision_impulse);
                 }
@@ -42,7 +43,7 @@ impl PhysicsController {
                 let acceleration = force / cb1.mass;
 
                 let direction = subtract(cb1.cartesian_position, cb2.cartesian_position);
-
+                
                 cb_impulse = add(
                     cb_impulse,
                     scale(
@@ -51,6 +52,9 @@ impl PhysicsController {
                     ),
                 );
             }
+
+            // disable collisions and gravity for testing
+            //let cb_impulse = [0.0, 0.0, 0.0];
 
             // save the overall impulse
             impulses.push(cb_impulse);
