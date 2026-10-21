@@ -2,7 +2,7 @@
 extern crate glium;
 
 use glium::winit::event_loop::EventLoop;
-//use rand::prelude::*;
+use rand::prelude::*;
 
 use std::{f64::consts::PI, println, vec};
 
@@ -37,6 +37,7 @@ fn main() {
         .with_inner_size(1920, 1080)
         .build(&event_loop);
 
+        /*
     let earth = CelestialBody::new(
         0,
         6.38 * 10.0_f64.powi(7),
@@ -46,6 +47,7 @@ fn main() {
         //0.0,
         //0.0,
     );
+    */
 
     /*
         let moon = CelestialBody::new(
@@ -59,11 +61,11 @@ fn main() {
     );
      */
 
-    let bodies = vec![earth];
+    //let bodies = vec![earth];
 
-    //let mut rng = rand::rng();
+    let mut rng = rand::rng();
 
-    /*
+    
     let mut bodies: Vec<CelestialBody> = vec![];
     for i in 0..100 {
         let mass_radius_scalar = rng.random::<f64>();
@@ -81,12 +83,10 @@ fn main() {
                 10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
                 10.0_f64.powi(10) * (rng.random::<f64>() - 0.5),
             ],
-            rng.random::<f64>() * PI / 10.0,
-            rng.random::<f64>() * PI * 2.0,
         );
         bodies.push(body);
     }
-    */
+    
 
     let mut furthest_dst_from_origin = 0.0_f64;
     let origin = [0.0_f64, 0.0_f64, 0.0_f64];
